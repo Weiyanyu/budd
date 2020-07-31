@@ -10,6 +10,10 @@
 
 #include <thread>
 
+#include "threadPool.h"
+
+using namespace budd;
+
 void processConn(int connFd, struct in_addr clientAddr);
 
 int main()
@@ -39,6 +43,8 @@ int main()
         exit(0);
     }
 
+    ThreadPool pool(8);
+
     while (true)
     {
         struct sockaddr_in clientAddr;
@@ -49,8 +55,7 @@ int main()
             std::cerr << "accept error!!!" << std::endl;
             exit(0);
         }
-        std::thread t(processConn, connFd, clientAddr.sin_addr);
-        t.detach();
+        pool.enqueue(processConn, connFd, clientAddr.sin_addr);
     }
 }
 
@@ -67,6 +72,7 @@ void processConn(int connFd, struct in_addr clientAddr)
     {
         std::memset(buf, 0, sizeof(buf));
         int len = recv(connFd, buf, sizeof(buf), 0);
+        //if len equal 0, mean client disconnect, we must add this condition, or else it will cause server crash
         if (len == 0)
         {
             std::cout << "client force close connection!!!" << std::endl;
