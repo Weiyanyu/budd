@@ -32,7 +32,6 @@ int main() {
         memset(data, 0, sizeof(data));
         std::cin >> data;
         send(socketFd, data, sizeof(data), 0);
-
         int len = recv(socketFd, buf, sizeof(buf), 0);
         if (std::strcmp("bye!", buf) == 0) {
 
