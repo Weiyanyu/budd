@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 SET(EXECUTABLE_OUTPUT_PATH ../bin)
 
 #for test
-foreach(target socketServer socketClient testThreadPool socketServerSelect)
+foreach(target socketServer socketClient testThreadPool socketServerSelect socketServerPoll)
 
     include_directories(./include/)
     file(GLOB SOURCES "./src/*.cpp" ./test/${target}.cpp)
