@@ -46,7 +46,7 @@ int main()
 
     struct pollfd pollfds[1024];
     pollfds[0].fd = listenFd;
-    pollfds[0].events |= POLLIN;
+    pollfds[0].events |= (POLLIN | POLLPRI);
 
     int maxNum = 1;
 
@@ -63,10 +63,9 @@ int main()
         socklen_t addrLen = sizeof(clientAddr);
 
         int eventNum = poll(pollfds, maxNum, -1);
-        std::cout << "event num " << eventNum << std::endl;
 
         for (int i = 0; i < maxNum; i++) {
-            if (pollfds[i].revents & POLLIN) {
+            if (pollfds[i].revents & (POLLIN | POLLPRI)) {
                 if (pollfds[i].fd == listenFd) {
                     int connFd = accept(listenFd, (struct sockaddr *)&clientAddr, &addrLen);
                     if (connFd == -1)
@@ -82,7 +81,7 @@ int main()
                     std::cout << "accept client ip : " << clientIP << std::endl;
 
                     pollfds[maxNum].fd = connFd;
-                    pollfds[maxNum].events |= POLLIN;
+                    pollfds[maxNum].events |= (POLLIN | POLLPRI);
                     maxNum++;
 
                     if (--eventNum == 0) {
@@ -102,9 +101,9 @@ int main()
                         maxNum--;
                         continue;
                     }
-                    pollfds[i].events = POLLOUT;
+                    pollfds[i].events |= (POLLOUT | POLLWRBAND);
                 }
-            } else if (pollfds[i].revents & POLLOUT) {
+            } else if (pollfds[i].revents & (POLLOUT | POLLWRBAND)) {
                 int fd = pollfds[i].fd;
                 send(fd, buffers[fd], sizeof(buffers[fd]), 0);
                 pollfds[i].events = POLLIN;
