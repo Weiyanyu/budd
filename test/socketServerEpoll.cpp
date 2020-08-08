@@ -109,8 +109,11 @@ int main()
             {
                 int fd = revents[i].data.fd;
                 send(fd, buffers[fd], sizeof(buffers[fd]), 0);
-                revents[i].events = EPOLLIN;
-                epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &revents[i]);
+                struct epoll_event newEvent;
+                newEvent.events = EPOLLIN;
+                newEvent.data.fd = fd;
+                // epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, &revents[i]);
+                epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &newEvent);
             }
         }
     }
