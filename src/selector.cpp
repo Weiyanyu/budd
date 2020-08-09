@@ -1,8 +1,6 @@
 #include "selector.h"
 #include "channel.h"
-#include <cassert>
-#include <algorithm>
-#include <iostream>
+
 
 Selector::Selector(EventLoop* eventLoop)
     :m_eventLoop(eventLoop)
@@ -37,7 +35,7 @@ void Selector::select(int timeout, std::vector<Channel*> &activeChannels)
 {
     int eventNum = epoll_wait(m_epollfd, m_reventsList.data(), m_reventsList.size(), timeout);
     if (eventNum > 0) {
-        std::cout << eventNum << " events happend" << std::endl;
+        LOG(INFO) << eventNum << " events happend";
         for (int i = 0; i < eventNum; i++) {
             int fd = m_reventsList[i].data.fd;
             auto channelIter = m_channelMaps.find(fd);
@@ -48,9 +46,9 @@ void Selector::select(int timeout, std::vector<Channel*> &activeChannels)
         }
 
     } else if (eventNum == 0) {
-        std::cout << "not event in this time" << std::endl;
+        LOG(INFO)  << "not event in this time";
     } else {
-        std::cerr << "select error!!!" << std::endl;
+        LOG(ERROR) << "select error!!!";
     }
 
 }

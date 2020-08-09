@@ -2,7 +2,6 @@
 #include "eventLoop.h"
 #include "selector.h"
 
-#include <iostream>
 
 Channel::Channel(EventLoop* eventLoop, int fd)
     :m_eventLoop(eventLoop),
@@ -15,7 +14,6 @@ Channel::Channel(EventLoop* eventLoop, int fd)
 
 void Channel::handleEvents()
 {
-    std::cout << "handle event" << std::endl;
     if ((m_revents & Selector::ERROR_EVENT) && m_errorCallback != nullptr) {
         m_errorCallback();
     }

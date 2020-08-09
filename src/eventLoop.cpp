@@ -1,8 +1,8 @@
 #include "eventLoop.h"
 #include "channel.h"
 #include "selector.h"
-#include <iostream>
 
+thread_local EventLoop* threadLocalEventLoop;
 
 EventLoop::EventLoop()
     :m_looping(false),
@@ -32,7 +32,6 @@ void EventLoop::loop()
 
 void EventLoop::quit()
 {
-
     m_quit = true;   
 }
 
