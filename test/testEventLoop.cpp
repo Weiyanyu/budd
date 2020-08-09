@@ -60,9 +60,6 @@ void processRead(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]) {
         clientChannel->disableEvents();
         std::cout << "client force close connection!!!" << std::endl;
     } else {
-        // clientChannel->disableEvents(Selector::READ_EVENT);
-        std::cout << "read fd = " << fd << " messsage : " << buffers[fd] << std::endl;
-
         clientChannel->eanbleWrite();
     }
 }
@@ -71,7 +68,6 @@ void prcessWrite(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]) {
     int fd = clientChannel->fd();
 
     send(fd, buffers[fd], sizeof(buffers[fd]), 0);
-    std::cout << "send fd = " << fd << " messsage : " << buffers[fd] << std::endl;
     clientChannel->enableRead();
 }
 

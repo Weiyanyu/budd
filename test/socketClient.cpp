@@ -7,7 +7,12 @@
 #include <iostream>
 #include <cstring>
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    if (argc < 2) {
+        std::cerr << "usge: please input data for echo" << std::endl;
+        exit(0);
+    }
 
     int socketFd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketFd == -1) {
@@ -27,18 +32,15 @@ int main() {
 
     char data[4 * 1024];
     char buf[4 * 1024];
-    while (true) {
-        memset(buf, 0, sizeof(buf));
-        memset(data, 0, sizeof(data));
-        std::cin >> data;
-        send(socketFd, data, sizeof(data), 0);
-        int len = recv(socketFd, buf, sizeof(buf), 0);
-        if (std::strcmp("bye!", buf) == 0) {
 
-            std::cout << buf << std::endl;
-            break;
-        }
-
+    memset(buf, 0, sizeof(buf));
+    memset(data, 0, sizeof(data));
+    memcpy(data, argv[1], sizeof(argv[1]));
+    send(socketFd, data, sizeof(data), 0);
+    int len = recv(socketFd, buf, sizeof(buf), 0);
+    if (std::strcmp("bye!", buf) == 0) {
+        std::cout << buf << std::endl;
+    } else {
         std::cout << buf << std::endl;
     }
 
