@@ -26,8 +26,10 @@ void Selector::updateChannel(Channel* ch)
         //old channel
         if (ch->events() == EMPTY_EVENT) {
             epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, &newEvent);
+            m_channelMaps.erase(fd);
+        } else {
+            epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &newEvent);
         }
-        epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &newEvent);
     }
 }
 
