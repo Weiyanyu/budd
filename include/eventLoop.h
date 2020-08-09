@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <glog/logging.h>
+#include <thread>
 
 
 
@@ -21,9 +22,14 @@ public:
     void loop();
     void quit();
 
+    void assertInLoopThread();
+
+    EventLoop* getEventLoopInThread();
+
 private:
     bool m_looping;
     bool m_quit;
+    std::thread::id m_threadId;
     std::unique_ptr<Selector> m_selector;
     std::vector<Channel*> m_activeChannelList;
 };

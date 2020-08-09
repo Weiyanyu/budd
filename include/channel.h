@@ -5,6 +5,7 @@
 #include <memory>
 #include <iostream>
 #include <glog/logging.h>
+#include "selector.h"
 
 class EventLoop;
 
@@ -18,8 +19,10 @@ public:
     void registeWriteCallback(eventCallback callback) { m_writeCallback = std::move(callback); }
     void registeErrorCallback(eventCallback callback) { m_errorCallback = std::move(callback); }
 
-    void enableEvents(int events) { m_events |= events; update(); }
-    void disableEvents(int events) { m_events &= ~events; update(); }
+    void eanbleWrite() { m_events = Selector::WRITE_EVENT; update(); }
+    void enableRead() { m_events = Selector::READ_EVENT; update(); }
+    void enableError() { m_events = Selector::ERROR_EVENT; update(); }
+    void disableEvents() { m_events = Selector::EMPTY_EVENT; update(); }
 
     void handleEvents();
 

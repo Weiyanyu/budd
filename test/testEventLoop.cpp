@@ -1,38 +1,113 @@
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+#include <iostream>
+#include <cstring>
+#include <string>
+
+#include <thread>
+#include <unordered_map>
+#include <sys/time.h>
+
+#include <sys/epoll.h>
+#include <poll.h>
+
 #include "eventLoop.h"
 #include "channel.h"
 #include "selector.h"
-#include <cstring>
-#include <unistd.h>
 
 
-#include <sys/timerfd.h>
-#include <memory>
 
-#include <iostream>
+const int BUFFER_SIZE = 4 * 1024;
 
-EventLoop* g_loop;
+void processRead(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]);
+void prcessWrite(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]);
 
 
-void timeout()
-{
-    printf("Timeout!\n");
-    g_loop->quit();
+void processConn(int listenFd, EventLoop* loop, char buffers[1024][BUFFER_SIZE]) {
+    struct sockaddr_in clientAddr;
+    socklen_t addrLen = sizeof(clientAddr);
+    int connFd = accept(listenFd, (struct sockaddr *)&clientAddr, &addrLen);
+    if (connFd == -1)
+    {
+        std::cerr << "accept error!!!" << std::endl;
+        exit(0);
+    }
+    char clientIP[INET_ADDRSTRLEN];
+    std::memset(clientIP, 0, sizeof(clientIP));
+
+    inet_ntop(AF_INET, &clientAddr, clientIP, INET_ADDRSTRLEN);
+    std::cout << "accept client ip : " << clientIP << std::endl;
+
+    Channel *clientChannel = new Channel(loop, connFd);
+    clientChannel->enableRead();
+
+
+    clientChannel->registeReadCallback(std::bind(processRead, clientChannel, buffers));
+    clientChannel->registeWriteCallback(std::bind(prcessWrite, clientChannel, buffers));
 }
 
-int main() {
+void processRead(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]) {
+    int fd = clientChannel->fd();
+    std::memset(buffers[fd], 0, sizeof(buffers[fd]));
+    int len = recv(fd, buffers[fd], sizeof(buffers[fd]), 0);
+    //if len equal 0, mean client disconnect, we must add this condition, or else it will cause server crash
+    if (len == 0)
+    {
+        clientChannel->disableEvents();
+        std::cout << "client force close connection!!!" << std::endl;
+    } else {
+        // clientChannel->disableEvents(Selector::READ_EVENT);
+        std::cout << "read fd = " << fd << " messsage : " << buffers[fd] << std::endl;
+
+        clientChannel->eanbleWrite();
+    }
+}
+
+void prcessWrite(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]) {
+    int fd = clientChannel->fd();
+
+    send(fd, buffers[fd], sizeof(buffers[fd]), 0);
+    std::cout << "send fd = " << fd << " messsage : " << buffers[fd] << std::endl;
+    clientChannel->enableRead();
+}
+
+int main()
+{
+    int listenFd = socket(AF_INET, SOCK_STREAM, 0);
+    if (listenFd == -1)
+    {
+        std::cerr << "Error socket!!!" << std::endl;
+        exit(0);
+    }
+
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port = 8000;
+    addr.sin_addr.s_addr = INADDR_ANY;
+
+    if (bind(listenFd, (const struct sockaddr *)&addr, sizeof(addr)) == -1)
+    {
+        std::cerr << "bind server error!!!" << std::endl;
+        exit(0);
+    }
+
+    if (listen(listenFd, 5) == -1)
+    {
+        std::cerr << "listen error!!!" << std::endl;
+        exit(0);
+    }
+
+    char buffers[1024][BUFFER_SIZE];
     EventLoop loop;
-    g_loop = &loop;
-
-    int timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-    Channel channel(&loop, timerfd);
-    channel.registeReadCallback(std::bind(&timeout));
-    channel.enableEvents(Selector::READ_EVENT);
-
-    struct itimerspec howlong;
-    memset(&howlong, 0, sizeof(howlong));
-    howlong.it_value.tv_sec = 5;
-    timerfd_settime(timerfd, 0, &howlong, nullptr);
+    Channel serverChannel(&loop, listenFd);
+    serverChannel.enableRead();
+    serverChannel.registeReadCallback(std::bind(&processConn, listenFd, &loop, buffers));
+    std::cout << "loop" << std::endl;
     loop.loop();
-    close(timerfd);
-
+    serverChannel.disableEvents();
+    return 0;
 }

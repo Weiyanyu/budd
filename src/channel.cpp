@@ -23,7 +23,7 @@ void Channel::handleEvents()
     }
 
     if ((m_revents & Selector::WRITE_EVENT) && m_writeCallback != nullptr) {
-        m_readCallback();
+        m_writeCallback();
     }
 }
 
