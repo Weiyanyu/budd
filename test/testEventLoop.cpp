@@ -23,8 +23,8 @@
 
 const int BUFFER_SIZE = 4 * 1024;
 
-void processRead(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]);
-void prcessWrite(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]);
+void processRead(std::shared_ptr<Channel> clientChannel, char buffers[1024][BUFFER_SIZE]);
+void prcessWrite(std::shared_ptr<Channel> clientChannel, char buffers[1024][BUFFER_SIZE]);
 
 
 void processConn(int listenFd, EventLoop* loop, char buffers[1024][BUFFER_SIZE]) {
@@ -42,15 +42,17 @@ void processConn(int listenFd, EventLoop* loop, char buffers[1024][BUFFER_SIZE])
     inet_ntop(AF_INET, &clientAddr, clientIP, INET_ADDRSTRLEN);
     std::cout << "accept client ip : " << clientIP << std::endl;
 
-    Channel *clientChannel = new Channel(loop, connFd);
+    auto clientChannel = std::make_shared<Channel>(loop, connFd);
+
     clientChannel->enableRead();
 
-
     clientChannel->registeReadCallback(std::bind(processRead, clientChannel, buffers));
+
     clientChannel->registeWriteCallback(std::bind(prcessWrite, clientChannel, buffers));
+
 }
 
-void processRead(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]) {
+void processRead(std::shared_ptr<Channel> clientChannel, char buffers[1024][BUFFER_SIZE]) {
     int fd = clientChannel->fd();
     std::memset(buffers[fd], 0, sizeof(buffers[fd]));
     int len = recv(fd, buffers[fd], sizeof(buffers[fd]), 0);
@@ -64,7 +66,7 @@ void processRead(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]) {
     }
 }
 
-void prcessWrite(Channel* clientChannel, char buffers[1024][BUFFER_SIZE]) {
+void prcessWrite(std::shared_ptr<Channel> clientChannel, char buffers[1024][BUFFER_SIZE]) {
     int fd = clientChannel->fd();
 
     send(fd, buffers[fd], sizeof(buffers[fd]), 0);
