@@ -18,6 +18,8 @@ public:
     ~EventLoop();
 
     void updateChannel(Channel* ch);
+    void removeChannel(Channel* ch);
+
 
     void loop();
     void quit();
@@ -25,6 +27,7 @@ public:
     void assertInLoopThread();
 
     EventLoop* getEventLoopInThread();
+
 
 private:
     bool m_looping;

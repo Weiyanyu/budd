@@ -21,16 +21,17 @@ void Selector::updateChannel(Channel* ch)
         epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd, &newEvent);
         m_channelMaps[fd] = ch;
     } else {
-        //old channel
-        if (ch->events() == EMPTY_EVENT) {
-            epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, &newEvent);
-            Channel *ch = m_channelMaps[fd];
-            m_channelMaps.erase(fd);
-            close(fd);
-        } else {
-            epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &newEvent);
-        }
+        epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &newEvent);
     }
+}
+
+void Selector::removeChannel(Channel* ch) {
+    assert(m_channelMaps.count(ch->fd()) > 0);
+    assert(m_channelMaps[ch->fd()] == ch);
+    assert(ch->events() == Selector::EMPTY_EVENT);
+
+    m_channelMaps.erase(ch->fd());
+    epoll_ctl(m_epollfd, EPOLL_CTL_DEL, ch->fd(), NULL);
 }
 
 void Selector::select(int timeout, std::vector<Channel*> &activeChannels)
@@ -52,5 +53,5 @@ void Selector::select(int timeout, std::vector<Channel*> &activeChannels)
     } else {
         LOG(ERROR) << "select error!!!";
     }
-
 }
+

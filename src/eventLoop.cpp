@@ -24,6 +24,13 @@ void EventLoop::updateChannel(Channel* ch)
     m_selector->updateChannel(ch);
 }
 
+void EventLoop::removeChannel(Channel* ch)
+{
+    assert(ch->eventLoop() == this);
+    assertInLoopThread();
+    m_selector->removeChannel(ch);
+}
+
 void EventLoop::loop() 
 {
     m_looping = true;

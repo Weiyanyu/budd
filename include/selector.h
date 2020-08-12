@@ -23,6 +23,7 @@ public:
 
     void select(int timeout, std::vector<Channel*> &activeChannels);
     void updateChannel(Channel* ch);
+    void removeChannel(Channel* ch);
 
 private:
     EventLoop* m_eventLoop;

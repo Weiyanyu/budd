@@ -60,6 +60,9 @@ void processRead(std::shared_ptr<Channel> clientChannel, char buffers[1024][BUFF
     if (len == 0)
     {
         clientChannel->disableEvents();
+        clientChannel->eventLoop()->removeChannel(clientChannel.get());
+        //need user close fd self.
+        close(fd);
         std::cout << "client force close connection!!!" << std::endl;
     } else {
         clientChannel->eanbleWrite();
@@ -104,7 +107,6 @@ int main()
     Channel serverChannel(&loop, listenFd);
     serverChannel.enableRead();
     serverChannel.registeReadCallback(std::bind(&processConn, listenFd, &loop, buffers));
-    std::cout << "loop" << std::endl;
     loop.loop();
     serverChannel.disableEvents();
     return 0;
