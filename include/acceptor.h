@@ -15,7 +15,7 @@ class EventLoop;
 
 class Acceptor {
 public:
-    typedef std::function<void(int listenFd, const char* clientIp)> newConnectionCallback;
+    typedef std::function<void(int fd, const char* ip)> newConnectionCallback;
 
     Acceptor(EventLoop* eventLoop, int port);
 

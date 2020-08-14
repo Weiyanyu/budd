@@ -1,25 +1,24 @@
 #include "acceptor.h"
 #include "eventLoop.h"
 #include "channel.h"
+#include "tcpserver.h"
 
 #include <string>
 
 using namespace std;
 
-void newConnectionCallback(int connfd, const char* clientIp) 
+void newConnectionCallback(const std::shared_ptr<TcpConnection>& conn) 
 {
-    std::string str = "Hello, man!";
-    send(connfd, str.c_str(), str.size(), 0);
-    close(connfd);
+    send(conn->sockFd(), conn->clientIp(), sizeof(conn->clientIp()), 0);
+    close(conn->sockFd());
 }
 
 int main() {
 
     EventLoop loop;
-    Acceptor acceptor(&loop, 8000);
-    acceptor.setNewConnectionCallback(newConnectionCallback);
-
-    acceptor.listen();
+    TcpServer server(&loop, 8000);
+    server.setConnectionCallback(newConnectionCallback);
+    server.start();
 
     loop.loop();
 }
