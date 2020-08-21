@@ -32,5 +32,11 @@ void Channel::update()
     m_eventLoop->updateChannel(this);
 }
 
+void Channel::remove()
+{
+    m_eventLoop->assertInLoopThread();
+    m_eventLoop->removeChannel(this);
+}
+
 
 

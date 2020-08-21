@@ -39,6 +39,7 @@ void TcpServer::newConnection(int connFd, const char* clientIp)
 
     connectionMaps[connFd] = conn;
     conn->setConnnectionCallback(m_newConnectionCallback);
+    conn->setMessageCallback(m_messageCallback);
     conn->connectEstablished();
 }
 

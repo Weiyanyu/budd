@@ -15,7 +15,7 @@ SET(LINK_DIR /usr/local/lib)
 link_directories(${LINK_DIR})
 
 #for test
-foreach(target socketServer socketClient testThreadPool socketServerSelect socketServerPoll socketServerEpoll testEventLoop testAcceptor)
+foreach(target socketClient testAcceptor)
 
     include_directories(./include/)
     file(GLOB SOURCES "./src/*.cpp" ./test/${target}.cpp)

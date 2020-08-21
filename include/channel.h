@@ -24,6 +24,8 @@ public:
     void enableError() { m_events = Selector::ERROR_EVENT; update(); }
     void disableEvents() { m_events = Selector::EMPTY_EVENT; update(); }
 
+    void remove();
+
     void handleEvents();
 
     //getter and setter
