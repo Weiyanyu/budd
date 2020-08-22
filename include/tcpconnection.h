@@ -23,6 +23,8 @@ public:
     void connectEstablished();
     void connectDestroyed();
 
+    void sendData(const char* data);
+
     int sockFd() { return m_sockfd; }
     const char* clientIp() { return m_clientIp; }
 private:
@@ -42,9 +44,13 @@ private:
     int m_sockfd;
     State m_state;
 
+    char m_buffer[1024 * 64];
+
     connectionCallback m_connectionCallbalk;
     messageCallback m_messageCallback;
     closeCallback m_closeCallback;
+
+
 
 };
 

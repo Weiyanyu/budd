@@ -2,6 +2,7 @@
 #include "eventLoop.h"
 #include "channel.h"
 #include "tcpserver.h"
+#include <sstream>
 
 #include <string>
 
@@ -15,9 +16,10 @@ void newConnectionCallback(const std::shared_ptr<TcpConnection>& conn)
 
 void messageCallback(const std::shared_ptr<TcpConnection>& conn, char* buf, int n)
 {
-    std::cout << "read " << n << " data : " << buf << std::endl;
-    // LOG(INFO) << "read " << n << " data : " << buf;
-    // close(conn->sockFd());
+    LOG(INFO) << "read " << n << " data : " << buf;
+    stringstream ss;
+    ss << "Hello, " << conn->clientIp();
+    conn->sendData(ss.str().c_str());
 }
 
 int main() {

@@ -6,12 +6,15 @@
 #include <glog/logging.h>
 #include <thread>
 #include <mutex>
+#include <functional>
 
 class Channel;
 class Selector;
 
 class EventLoop {
 public:
+
+    using taskFunc = std::function<void()>;
 
     EventLoop();
     ~EventLoop();
@@ -27,14 +30,27 @@ public:
     void assertInLoopThread();
 
     EventLoop* getEventLoopInThread();
+    void runInLoop(const taskFunc& t);
+    void queueInLoop(const taskFunc& t);
 
+    void wakeup();
 
 private:
+    void handleRead();
+    void execTasks();
+
     bool m_looping;
     bool m_quit;
     std::thread::id m_threadId;
     std::unique_ptr<Selector> m_selector;
     std::vector<Channel*> m_activeChannelList;
+
+    std::vector<taskFunc> m_taskQ;
+    std::mutex m_mutex;
+    int m_wakeupFd;
+    std::unique_ptr<Channel> m_wakeupChannel;
+
+    bool m_callingTask;
 };
 
 #endif

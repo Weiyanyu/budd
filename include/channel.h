@@ -36,6 +36,10 @@ public:
     void setRevents(int revents) { m_revents = revents; }
     EventLoop* eventLoop() { return m_eventLoop; }
 
+    ~Channel()
+    {
+        LOG(INFO) << "channel destory";
+    }
 
 private:
     EventLoop* m_eventLoop;

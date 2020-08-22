@@ -43,12 +43,12 @@ int main(int argc, char* argv[]) {
     std::cout << "send data : " << data << std::endl;
 
     send(socketFd, data, sizeof(data), 0);
-    // int len = recv(socketFd, buf, sizeof(buf), 0);
-    // if (std::strcmp("bye!", buf) == 0) {
-    //     std::cout << buf << std::endl;
-    // } else {
-    //     std::cout << buf << std::endl;
-    // }
+    int len = recv(socketFd, buf, sizeof(buf), 0);
+    if (std::strcmp("bye!", buf) == 0) {
+        std::cout << buf << std::endl;
+    } else {
+        std::cout << buf << std::endl;
+    }
 
     close(socketFd);
 

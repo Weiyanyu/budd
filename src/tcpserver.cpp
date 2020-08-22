@@ -52,8 +52,8 @@ void TcpServer::removeConection(const std::shared_ptr<TcpConnection> &conn)
 
     m_connectionMaps.erase(conn->sockFd());
     
-    //WARNING
-    conn->connectDestroyed();
+    
+    m_eventLoop->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
     
 }
 
