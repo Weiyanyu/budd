@@ -16,17 +16,27 @@ public:
     typedef std::function<void(const std::shared_ptr<TcpConnection>&)> closeCallback;
 
 
-    void setConnnectionCallback(connectionCallback cb) { m_connectionCallbalk = std::move(cb); }
-    void setMessageCallback(messageCallback cb) { m_messageCallback = std::move(cb); }
-    void setCloseCallback(closeCallback cb) { m_closeCallback = std::move(cb); }
+    void setConnnectionCallback(connectionCallback cb) {
+        m_connectionCallbalk = std::move(cb);
+    }
+    void setMessageCallback(messageCallback cb) {
+        m_messageCallback = std::move(cb);
+    }
+    void setCloseCallback(closeCallback cb) {
+        m_closeCallback = std::move(cb);
+    }
 
     void connectEstablished();
     void connectDestroyed();
 
     void sendData(const char* data);
 
-    int sockFd() { return m_sockfd; }
-    const char* clientIp() { return m_clientIp; }
+    int sockFd() {
+        return m_sockfd;
+    }
+    const char* clientIp() {
+        return m_clientIp;
+    }
 private:
 
     void handleRead();

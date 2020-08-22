@@ -26,7 +26,9 @@ public:
         m_newConnectionCallback = std::move(callback);
     }
 
-    bool isListenning() { return m_listenning; }
+    bool isListenning() {
+        return m_listenning;
+    }
 
 private:
     int m_port;

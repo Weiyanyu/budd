@@ -8,11 +8,11 @@ using std::placeholders::_2;
 using std::placeholders::_3;
 
 
-TcpServer::TcpServer(EventLoop* eventLoop, int port) 
+TcpServer::TcpServer(EventLoop* eventLoop, int port)
     :m_eventLoop(eventLoop),
-     m_acceptor(new Acceptor(eventLoop, port)),
-     m_port(port),
-     m_started(false)
+    m_acceptor(new Acceptor(eventLoop, port)),
+    m_port(port),
+    m_started(false)
 {
 
 }
@@ -35,7 +35,7 @@ void TcpServer::newConnection(int connFd, const char* clientIp)
         m_eventLoop,
         connFd,
         clientIp
-    );
+        );
 
     m_connectionMaps[connFd] = conn;
     conn->setConnnectionCallback(m_newConnectionCallback);
@@ -51,10 +51,10 @@ void TcpServer::removeConection(const std::shared_ptr<TcpConnection> &conn)
 
 
     m_connectionMaps.erase(conn->sockFd());
-    
-    
+
+
     m_eventLoop->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
-    
+
 }
 
 

@@ -20,7 +20,8 @@ void Selector::updateChannel(Channel* ch)
         //new channel
         epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd, &newEvent);
         m_channelMaps[fd] = ch;
-    } else {
+    }
+    else {
         epoll_ctl(m_epollfd, EPOLL_CTL_MOD, fd, &newEvent);
     }
 }
@@ -50,9 +51,11 @@ void Selector::select(int timeout, std::vector<Channel*> &activeChannels)
             activeChannels.push_back(channel);
         }
 
-    } else if (eventNum == 0) {
+    }
+    else if (eventNum == 0) {
         LOG(INFO)  << "not event in this time";
-    } else {
+    }
+    else {
         LOG(ERROR) << "select error!!!";
     }
 }

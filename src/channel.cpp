@@ -5,9 +5,9 @@
 
 Channel::Channel(EventLoop* eventLoop, int fd)
     :m_eventLoop(eventLoop),
-     m_fd(fd),
-     m_events(0),
-     m_revents(0)
+    m_fd(fd),
+    m_events(0),
+    m_revents(0)
 {
 
 }

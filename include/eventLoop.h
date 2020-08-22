@@ -25,7 +25,9 @@ public:
 
     void loop();
     void quit();
-    bool isInLoopThread() { return std::this_thread::get_id() == m_threadId; }
+    bool isInLoopThread() {
+        return std::this_thread::get_id() == m_threadId;
+    }
 
     void assertInLoopThread();
 

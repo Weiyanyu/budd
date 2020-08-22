@@ -22,7 +22,7 @@ namespace budd
 
         template <typename F, typename... Args>
         auto enqueue(F &&f, Args &&... args)
-            -> std::future<typename std::result_of<F(Args...)>::type>;
+            ->std::future<typename std::result_of<F(Args...)>::type>;
 
     private:
         //worker list
@@ -63,7 +63,7 @@ namespace budd
             this->m_tasks.emplace([task]() {
                 //Note: This is where the execution function is actually called
                 (*task)();
-            });
+                });
         }
         m_condition.notify_one();
         //return future, caller can wait and get result

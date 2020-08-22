@@ -3,9 +3,9 @@
 
 Acceptor::Acceptor(EventLoop* eventLoop, int port)
     :m_port(port),
-     m_listenning(false),
-     m_listenChannel(eventLoop, socket(AF_INET, SOCK_STREAM, 0)),
-     m_listenFd(m_listenChannel.fd())
+    m_listenning(false),
+    m_listenChannel(eventLoop, socket(AF_INET, SOCK_STREAM, 0)),
+    m_listenFd(m_listenChannel.fd())
 {
     LOG_ASSERT(m_listenFd >= 0);
 
@@ -20,7 +20,7 @@ Acceptor::Acceptor(EventLoop* eventLoop, int port)
     }
 }
 
-void Acceptor::listen() 
+void Acceptor::listen()
 {
     if (::listen(m_listenFd, 5) == -1)
     {
@@ -48,7 +48,8 @@ void Acceptor::accept()
 
     if (connFd >= 0 && m_newConnectionCallback != nullptr) {
         m_newConnectionCallback(connFd, clientIP);
-    } else {
+    }
+    else {
         //close fd
         ::close(connFd);
     }

@@ -25,7 +25,8 @@ EventLoop::EventLoop()
 {
     if (threadLocalEventLoop != nullptr) {
         LOG(FATAL) << "one thread only can have on event loop!!!";
-    } else {
+    }
+    else {
         threadLocalEventLoop = this;
     }
 
@@ -47,7 +48,7 @@ void EventLoop::removeChannel(Channel* ch)
     m_selector->removeChannel(ch);
 }
 
-void EventLoop::loop() 
+void EventLoop::loop()
 {
     m_looping = true;
     while (m_quit == false) {
@@ -64,17 +65,17 @@ void EventLoop::loop()
 
 void EventLoop::quit()
 {
-    m_quit = true;   
+    m_quit = true;
 }
 
-void EventLoop::assertInLoopThread() 
+void EventLoop::assertInLoopThread()
 {
     if (m_threadId != std::this_thread::get_id()) {
         LOG(FATAL) << "one thread only can have on event loop!!!";
     }
 }
 
-EventLoop::~EventLoop() 
+EventLoop::~EventLoop()
 {
     threadLocalEventLoop = nullptr;
 }
@@ -89,7 +90,8 @@ void EventLoop::runInLoop(const taskFunc& t)
 {
     if (isInLoopThread()) {
         t();
-    } else {
+    }
+    else {
         queueInLoop(t);
     }
 }

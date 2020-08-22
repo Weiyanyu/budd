@@ -27,7 +27,7 @@ void TcpConnection::connectEstablished()
     m_channel->enableRead();
 }
 
-void TcpConnection::handleRead() 
+void TcpConnection::handleRead()
 {
     m_eventLoop->assertInLoopThread();
     assert(m_state == CONNECTED);
@@ -36,28 +36,30 @@ void TcpConnection::handleRead()
     ssize_t n = recv(m_channel->fd(), m_buffer, sizeof(m_buffer), 0);
     if (n == 0) {
         handleClose();
-    } else if (n < 0) {
+    }
+    else if (n < 0) {
         handleError();
-    } else {
+    }
+    else {
         m_messageCallback(shared_from_this(), m_buffer, n);
     }
 
 }
 
-void TcpConnection::handleClose() 
+void TcpConnection::handleClose()
 {
     m_eventLoop->assertInLoopThread();
     assert(m_state == CONNECTED);
-    
+
     LOG(INFO) << "close connection";
- 
+
     m_channel->disableEvents();
     m_closeCallback(shared_from_this());
 }
 
 void TcpConnection::handleError()
-{   
-         
+{
+
     LOG(ERROR) << "connection errro!!!  errno: " << strerror(errno);
 }
 
