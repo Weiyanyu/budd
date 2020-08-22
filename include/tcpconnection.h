@@ -12,7 +12,7 @@ public:
     TcpConnection(EventLoop* eventLoop, int sockfd, const char *clientIp);
 
     typedef std::function<void(const std::shared_ptr<TcpConnection>&)> connectionCallback;
-    typedef std::function<void(const std::shared_ptr<TcpConnection>&, char*)> messageCallback;
+    typedef std::function<void(const std::shared_ptr<TcpConnection>&, char*, int)> messageCallback;
     typedef std::function<void(const std::shared_ptr<TcpConnection>&)> closeCallback;
 
 

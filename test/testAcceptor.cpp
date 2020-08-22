@@ -13,9 +13,10 @@ void newConnectionCallback(const std::shared_ptr<TcpConnection>& conn)
     // close(conn->sockFd());
 }
 
-void messageCallback(const std::shared_ptr<TcpConnection>& conn, char* buf)
+void messageCallback(const std::shared_ptr<TcpConnection>& conn, char* buf, int n)
 {
-    LOG(INFO) << "read data: " << buf;
+    std::cout << "read " << n << " data : " << buf << std::endl;
+    // LOG(INFO) << "read " << n << " data : " << buf;
     // close(conn->sockFd());
 }
 

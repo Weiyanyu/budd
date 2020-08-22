@@ -1,5 +1,7 @@
 #include "tcpconnection.h"
 #include "eventLoop.h"
+#include <sys/socket.h>
+#include <cstring>
 
 TcpConnection::TcpConnection(EventLoop* eventLoop, int sockfd, const char *clientIp)
     :m_eventLoop(eventLoop),
@@ -30,13 +32,14 @@ void TcpConnection::handleRead()
     assert(m_state == CONNECTED);
 
     char buf[1024 * 64];
-    ssize_t n = read(m_channel->fd(), buf, sizeof(buf));
+    std::memset(buf, 0, sizeof(buf));
+    ssize_t n = recv(m_channel->fd(), buf, sizeof(buf), 0);
     if (n == 0) {
         handleClose();
     } else if (n < 0) {
         handleError();
     } else {
-        m_messageCallback(shared_from_this(), buf);
+        m_messageCallback(shared_from_this(), buf, n);
     }
 
 }
@@ -59,7 +62,7 @@ void TcpConnection::handleError()
 
 void TcpConnection::handleWrite()
 {
-
+    //TODO: handleWrite
 }
 
 void TcpConnection::connectDestroyed()

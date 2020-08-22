@@ -30,7 +30,7 @@ int main()
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_port = 8080;
+    addr.sin_port = 8000;
     addr.sin_addr.s_addr = INADDR_ANY;
 
     if (bind(listenFd, (const struct sockaddr *)&addr, sizeof(addr)) == -1)

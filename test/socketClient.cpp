@@ -30,12 +30,18 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
 
+
+
     char data[64 * 1024];
     char buf[64 * 1024];
 
+    
+
     memset(buf, 0, sizeof(buf));
     memset(data, 0, sizeof(data));
-    memcpy(data, argv[1], sizeof(argv[1]));
+    std::memcpy(data, argv[1], std::strlen(argv[1]));
+    std::cout << "send data : " << data << std::endl;
+
     send(socketFd, data, sizeof(data), 0);
     // int len = recv(socketFd, buf, sizeof(buf), 0);
     // if (std::strcmp("bye!", buf) == 0) {

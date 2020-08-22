@@ -11,7 +11,7 @@ class Acceptor;
 class TcpServer {
 public:
     typedef std::function<void(const std::shared_ptr<TcpConnection>& conn)> connectionCallback;
-    typedef std::function<void(const std::shared_ptr<TcpConnection>& conn, char* buf)> messageCallback;
+    typedef std::function<void(const std::shared_ptr<TcpConnection>& conn, char* buf, int n)> messageCallback;
 
 
     TcpServer(EventLoop* eventLoop, int port);
