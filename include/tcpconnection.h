@@ -1,9 +1,13 @@
 #ifndef TCPCONNECTION_H
 #define TCPCONNECTION_H
 
-#include "channel.h"
 #include <memory>
 #include <functional>
+#include <sys/socket.h>
+#include <cstring>
+#include <sys/errno.h>
+
+#include "channel.h"
 
 class EventLoop;
 
@@ -37,6 +41,7 @@ public:
     const char* clientIp() {
         return m_clientIp;
     }
+
 private:
 
     void handleRead();

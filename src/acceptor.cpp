@@ -45,7 +45,6 @@ void Acceptor::accept()
     std::memset(clientIP, 0, sizeof(clientIP));
 
     inet_ntop(AF_INET, &clientAddr, clientIP, INET_ADDRSTRLEN);
-
     if (connFd >= 0 && m_newConnectionCallback != nullptr) {
         m_newConnectionCallback(connFd, clientIP);
     }

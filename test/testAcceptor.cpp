@@ -16,10 +16,9 @@ void newConnectionCallback(const std::shared_ptr<TcpConnection>& conn)
 
 void messageCallback(const std::shared_ptr<TcpConnection>& conn, char* buf, int n)
 {
-    LOG(INFO) << "read " << n << " data : " << buf;
-    stringstream ss;
-    ss << "Hello, " << conn->clientIp();
-    conn->sendData(ss.str().c_str());
+    LOG(INFO) << "read client ip : " << conn->clientIp() << n << " data : " << buf;
+    
+    conn->sendData(conn->clientIp());
 }
 
 int main() {

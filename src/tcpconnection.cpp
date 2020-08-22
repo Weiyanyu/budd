@@ -1,8 +1,5 @@
 #include "tcpconnection.h"
 #include "eventLoop.h"
-#include <sys/socket.h>
-#include <cstring>
-#include <sys/errno.h>
 
 TcpConnection::TcpConnection(EventLoop* eventLoop, int sockfd, const char *clientIp)
     :m_eventLoop(eventLoop),
@@ -84,7 +81,6 @@ void TcpConnection::connectDestroyed()
     m_channel->disableEvents();
     m_eventLoop->removeChannel(m_channel.get());
 
-    close(m_sockfd);
 }
 
 void TcpConnection::sendData(const char* data)
