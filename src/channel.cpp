@@ -14,6 +14,12 @@ Channel::Channel(EventLoop* eventLoop, int fd)
 
 void Channel::handleEvents()
 {
+    if ((m_revents & Selector::HUP_EVENT) && !(m_revents & Selector::READ_EVENT)) {
+        if (m_closeCallback != nullptr) {
+            m_closeCallback();
+        }
+    }
+
     if ((m_revents & Selector::ERROR_EVENT) && m_errorCallback != nullptr) {
         m_errorCallback();
     }

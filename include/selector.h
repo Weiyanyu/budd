@@ -17,6 +17,7 @@ public:
     static const int READ_EVENT = EPOLLIN | EPOLLPRI;
     static const int WRITE_EVENT = EPOLLOUT;
     static const int ERROR_EVENT = EPOLLERR;
+    static const int HUP_EVENT = EPOLLHUP;
     static const int EMPTY_EVENT = 0;
 
     Selector(EventLoop* m_eventLoop);

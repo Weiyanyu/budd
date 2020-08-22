@@ -13,17 +13,24 @@ public:
 
     typedef std::function<void(const std::shared_ptr<TcpConnection>&)> connectionCallback;
     typedef std::function<void(const std::shared_ptr<TcpConnection>&, char*)> messageCallback;
+    typedef std::function<void(const std::shared_ptr<TcpConnection>&)> closeCallback;
 
 
     void setConnnectionCallback(connectionCallback cb) { m_connectionCallbalk = std::move(cb); }
     void setMessageCallback(messageCallback cb) { m_messageCallback = std::move(cb); }
+    void setCloseCallback(closeCallback cb) { m_closeCallback = std::move(cb); }
+
     void connectEstablished();
+    void connectDestroyed();
 
     int sockFd() { return m_sockfd; }
     const char* clientIp() { return m_clientIp; }
 private:
 
     void handleRead();
+    void handleClose();
+    void handleError();
+    void handleWrite();
 
     enum State {
         NONE, CONNECTING, CONNECTED, DISCONNECT,
@@ -37,6 +44,7 @@ private:
 
     connectionCallback m_connectionCallbalk;
     messageCallback m_messageCallback;
+    closeCallback m_closeCallback;
 
 };
 

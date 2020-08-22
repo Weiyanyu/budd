@@ -30,19 +30,19 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
 
-    char data[4 * 1024];
-    char buf[4 * 1024];
+    char data[64 * 1024];
+    char buf[64 * 1024];
 
     memset(buf, 0, sizeof(buf));
     memset(data, 0, sizeof(data));
     memcpy(data, argv[1], sizeof(argv[1]));
     send(socketFd, data, sizeof(data), 0);
-    int len = recv(socketFd, buf, sizeof(buf), 0);
-    if (std::strcmp("bye!", buf) == 0) {
-        std::cout << buf << std::endl;
-    } else {
-        std::cout << buf << std::endl;
-    }
+    // int len = recv(socketFd, buf, sizeof(buf), 0);
+    // if (std::strcmp("bye!", buf) == 0) {
+    //     std::cout << buf << std::endl;
+    // } else {
+    //     std::cout << buf << std::endl;
+    // }
 
     close(socketFd);
 

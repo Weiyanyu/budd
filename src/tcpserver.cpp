@@ -37,10 +37,24 @@ void TcpServer::newConnection(int connFd, const char* clientIp)
         clientIp
     );
 
-    connectionMaps[connFd] = conn;
+    m_connectionMaps[connFd] = conn;
     conn->setConnnectionCallback(m_newConnectionCallback);
     conn->setMessageCallback(m_messageCallback);
+    conn->setCloseCallback(std::bind(&TcpServer::removeConection, this, _1));
     conn->connectEstablished();
+}
+
+void TcpServer::removeConection(const std::shared_ptr<TcpConnection> &conn)
+{
+    m_eventLoop->assertInLoopThread();
+    assert(m_connectionMaps.count(conn->sockFd()) > 0);
+
+
+    m_connectionMaps.erase(conn->sockFd());
+    
+    //WARNING
+    conn->connectDestroyed();
+    
 }
 
 

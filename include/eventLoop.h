@@ -5,8 +5,7 @@
 #include <iostream>
 #include <glog/logging.h>
 #include <thread>
-
-
+#include <mutex>
 
 class Channel;
 class Selector;
@@ -23,6 +22,7 @@ public:
 
     void loop();
     void quit();
+    bool isInLoopThread() { return std::this_thread::get_id() == m_threadId; }
 
     void assertInLoopThread();
 

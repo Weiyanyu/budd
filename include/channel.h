@@ -18,6 +18,7 @@ public:
     void registeReadCallback(eventCallback callback) { m_readCallback = std::move(callback); }
     void registeWriteCallback(eventCallback callback) { m_writeCallback = std::move(callback); }
     void registeErrorCallback(eventCallback callback) { m_errorCallback = std::move(callback); }
+    void registeCloseCallback(eventCallback callback) { m_closeCallback = std::move(callback); }
 
     void eanbleWrite() { m_events = Selector::WRITE_EVENT; update(); }
     void enableRead() { m_events = Selector::READ_EVENT; update(); }
@@ -46,6 +47,8 @@ private:
     eventCallback m_readCallback;
     eventCallback m_writeCallback;
     eventCallback m_errorCallback;
+    eventCallback m_closeCallback;
+
 
     void update();
 

@@ -21,13 +21,15 @@ public:
     void setConnectionCallback(connectionCallback cb) { m_newConnectionCallback = std::move(cb); } 
     void setMessageCallback(messageCallback cb) { m_messageCallback = std::move(cb); } 
 
+    void removeConection(const std::shared_ptr<TcpConnection> &conn);
+
 
 private:
     EventLoop* m_eventLoop;
     std::unique_ptr<Acceptor> m_acceptor;
     int m_port;
     bool m_started;
-    std::unordered_map<int, std::shared_ptr<TcpConnection>> connectionMaps;
+    std::unordered_map<int, std::shared_ptr<TcpConnection>> m_connectionMaps;
     connectionCallback m_newConnectionCallback;
     messageCallback m_messageCallback;
 

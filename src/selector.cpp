@@ -32,6 +32,8 @@ void Selector::removeChannel(Channel* ch) {
 
     m_channelMaps.erase(ch->fd());
     epoll_ctl(m_epollfd, EPOLL_CTL_DEL, ch->fd(), NULL);
+
+    LOG(INFO) << "remove Channel";
 }
 
 void Selector::select(int timeout, std::vector<Channel*> &activeChannels)
