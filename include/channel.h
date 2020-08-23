@@ -41,6 +41,10 @@ public:
         m_events = Selector::EMPTY_EVENT; update();
     }
 
+    bool isWriting() {
+        return m_events & Selector::WRITE_EVENT;
+    }
+
     void remove();
 
     void handleEvents();

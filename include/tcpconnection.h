@@ -36,6 +36,7 @@ public:
     void connectDestroyed();
 
     void sendData(const std::string &data);
+    void shutdown();
 
     int sockFd() {
         return m_sockfd;
@@ -51,9 +52,10 @@ private:
     void handleWrite();
 
     void sendDataInLoop(const std::string & data);
+    void shutdownInLoop();
 
     enum State {
-        NONE, CONNECTING, CONNECTED, DISCONNECT,
+        NONE, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECT,
     };
 
     EventLoop* m_eventLoop;

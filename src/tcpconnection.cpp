@@ -51,7 +51,7 @@ void TcpConnection::handleRead()
 void TcpConnection::handleClose()
 {
     m_eventLoop->assertInLoopThread();
-    assert(m_state == CONNECTED);
+    assert(m_state == CONNECTED || m_state == DISCONNECTING);
 
     LOG(INFO) << "close connection";
 
@@ -72,21 +72,29 @@ void TcpConnection::handleWrite()
     //TODO: handleWrite
 
     int sendN = write(m_sockfd, m_outputBuffer.peek(), m_outputBuffer.readableBytes());
-
-    if (sendN < 0) {
-        LOG(ERROR) << "send data error";
-    } else {
-        //clear
-        m_outputBuffer.retrieve(sendN);
+    if (m_channel->isWriting()) {
+        if (sendN < 0) {
+            LOG(ERROR) << "send data error";
+            m_channel->enableRead();
+        } else {
+            //clear
+            m_outputBuffer.retrieve(sendN);
+            if (m_outputBuffer.readableBytes() == 0) {
+                m_channel->enableRead();
+                if (m_state == DISCONNECTING) {
+                    shutdownInLoop();
+                }
+            } else {
+                LOG(INFO) << "continue write more data";
+            }
+        }
     }
-    //need enable read, or else crash 100%
-    m_channel->enableRead();
 }
 
 void TcpConnection::connectDestroyed()
 {
     m_eventLoop->assertInLoopThread();
-    assert(m_state == CONNECTED);
+    assert(m_state == CONNECTED || m_state == DISCONNECTING);
     m_state = DISCONNECT;
     m_channel->disableEvents();
     m_eventLoop->removeChannel(m_channel.get());
@@ -127,5 +135,23 @@ void TcpConnection::sendDataInLoop(const std::string& data)
         const char *newDataBegin = data.data() + sentN;
         m_outputBuffer.append(newDataBegin, data.size() - sentN);
         m_channel->eanbleWrite();
+    }
+}
+
+void TcpConnection::shutdown()
+{
+    if (m_state == CONNECTED) {
+        m_state = DISCONNECTING;
+        m_eventLoop->runInLoop(std::bind(&TcpConnection::shutdownInLoop, this));
+    }
+
+}
+
+void TcpConnection::shutdownInLoop()
+{
+    m_eventLoop->assertInLoopThread();
+    if (!m_channel->isWriting()) {
+        //close write port
+        ::shutdown(m_sockfd, SHUT_WR);
     }
 }
