@@ -5,13 +5,13 @@
 #include "tcpconnection.h"
 #include <unordered_map>
 
-
+class Buffer;
 class EventLoop;
 class Acceptor;
 class TcpServer {
 public:
     typedef std::function<void(const std::shared_ptr<TcpConnection>& conn)> connectionCallback;
-    typedef std::function<void(const std::shared_ptr<TcpConnection>& conn, char* buf, int n)> messageCallback;
+    typedef std::function<void(const std::shared_ptr<TcpConnection>& conn, Buffer*, int n)> messageCallback;
     typedef std::function<void(const std::shared_ptr<TcpConnection>& conn)> onCloseCallback;
 
     TcpServer(EventLoop* eventLoop, int port);

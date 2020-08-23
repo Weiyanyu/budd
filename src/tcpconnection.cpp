@@ -1,5 +1,6 @@
 #include "tcpconnection.h"
 #include "eventLoop.h"
+#include "buffer.h"
 
 TcpConnection::TcpConnection(EventLoop *eventLoop, int sockfd, const char *clientIp)
     : m_eventLoop(eventLoop),
@@ -29,19 +30,21 @@ void TcpConnection::handleRead()
     m_eventLoop->assertInLoopThread();
     assert(m_state == CONNECTED);
 
-    std::memset(m_buffer, 0, sizeof(m_buffer));
-    ssize_t n = recv(m_channel->fd(), m_buffer, sizeof(m_buffer), 0);
+    int savedErrono = 0;
+    
+    ssize_t n = m_inputBuffer.readFd(m_sockfd, &savedErrono);
     if (n == 0)
     {
         handleClose();
     }
     else if (n < 0)
     {
+        errno = savedErrono;
         handleError();
     }
     else
     {
-        m_messageCallback(shared_from_this(), m_buffer, n);
+        m_messageCallback(shared_from_this(), &m_inputBuffer, n);
     }
 }
 
@@ -68,8 +71,14 @@ void TcpConnection::handleWrite()
     assert(m_state == CONNECTED);
     //TODO: handleWrite
 
-    send(m_channel->fd(), m_buffer, sizeof(m_buffer), 0);
+    int sendN = write(m_sockfd, m_outputBuffer.peek(), m_outputBuffer.readableBytes());
 
+    if (sendN < 0) {
+        LOG(ERROR) << "send data error";
+    } else {
+        //clear
+        m_outputBuffer.retrieve(sendN);
+    }
     //need enable read, or else crash 100%
     m_channel->enableRead();
 }
@@ -101,7 +110,7 @@ void TcpConnection::sendData(const std::string & data)
 void TcpConnection::sendDataInLoop(const std::string& data)
 {
     m_eventLoop->assertInLoopThread();
-    size_t sentN = send(m_sockfd, data.data(), sizeof(data), 0);
+    size_t sentN = write(m_sockfd, data.data(), data.size());
 
     if (sentN < 0)
     {
@@ -113,11 +122,10 @@ void TcpConnection::sendDataInLoop(const std::string& data)
 
     assert(sentN >= 0);
 
-    if (sentN < sizeof(data))
+    if (sentN < data.size())
     {
         const char *newDataBegin = data.data() + sentN;
-        std::memset(m_buffer, 0, sizeof(m_buffer));
-        std::memcpy(m_buffer, newDataBegin, sizeof(data) - sentN);
+        m_outputBuffer.append(newDataBegin, data.size() - sentN);
         m_channel->eanbleWrite();
     }
 }

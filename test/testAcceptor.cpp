@@ -3,6 +3,7 @@
 #include "channel.h"
 #include "tcpserver.h"
 #include <sstream>
+#include "buffer.h"
 
 #include <string>
 
@@ -14,9 +15,9 @@ void newConnectionCallback(const std::shared_ptr<TcpConnection>& conn)
     // close(conn->sockFd());
 }
 
-void messageCallback(const std::shared_ptr<TcpConnection>& conn, char* buf, int n)
+void messageCallback(const std::shared_ptr<TcpConnection>& conn, Buffer* buf, int n)
 {
-    LOG(INFO) << "read client ip : " << conn->clientIp() << n << " data : " << buf;
+    LOG(INFO) << "read client ip : " << conn->clientIp() << n << " data : " << buf->retrieveAllAsSrting();
     
     conn->sendData(conn->clientIp());
 }

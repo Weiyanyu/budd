@@ -62,10 +62,6 @@ public:
         return m_eventLoop;
     }
 
-    ~Channel()
-    {
-        LOG(INFO) << "channel destory";
-    }
 
 private:
     EventLoop* m_eventLoop;

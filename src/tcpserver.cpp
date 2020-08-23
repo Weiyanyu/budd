@@ -2,6 +2,7 @@
 #include "eventLoop.h"
 #include "channel.h"
 #include "acceptor.h"
+#include "buffer.h"
 
 using std::placeholders::_1;
 using std::placeholders::_2;

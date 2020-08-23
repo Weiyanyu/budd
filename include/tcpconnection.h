@@ -8,6 +8,7 @@
 #include <utility>
 #include <sys/errno.h>
 
+#include "buffer.h"
 #include "channel.h"
 
 class EventLoop;
@@ -17,7 +18,7 @@ public:
     TcpConnection(EventLoop* eventLoop, int sockfd, const char *clientIp);
 
     typedef std::function<void(const std::shared_ptr<TcpConnection>&)> connectionCallback;
-    typedef std::function<void(const std::shared_ptr<TcpConnection>&, char*, int)> messageCallback;
+    typedef std::function<void(const std::shared_ptr<TcpConnection>&, Buffer*, int)> messageCallback;
     typedef std::function<void(const std::shared_ptr<TcpConnection>&)> closeCallback;
 
 
@@ -61,13 +62,12 @@ private:
     int m_sockfd;
     State m_state;
 
-    char m_buffer[1024 * 64];
-
     connectionCallback m_connectionCallbalk;
     messageCallback m_messageCallback;
     closeCallback m_closeCallback;
 
-
+    Buffer m_inputBuffer;
+    Buffer m_outputBuffer;
 
 };
 
