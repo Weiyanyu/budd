@@ -5,6 +5,7 @@
 #include <functional>
 #include <sys/socket.h>
 #include <cstring>
+#include <utility>
 #include <sys/errno.h>
 
 #include "channel.h"
@@ -33,15 +34,14 @@ public:
     void connectEstablished();
     void connectDestroyed();
 
-    void sendData(const char* data);
+    void sendData(const std::string &data);
 
     int sockFd() {
         return m_sockfd;
     }
-    const char* clientIp() {
+    std::string clientIp() {
         return m_clientIp;
     }
-
 private:
 
     void handleRead();
@@ -49,13 +49,15 @@ private:
     void handleError();
     void handleWrite();
 
+    void sendDataInLoop(const std::string & data);
+
     enum State {
         NONE, CONNECTING, CONNECTED, DISCONNECT,
     };
 
     EventLoop* m_eventLoop;
     std::unique_ptr<Channel> m_channel;
-    const char *m_clientIp;
+    std::string m_clientIp;
     int m_sockfd;
     State m_state;
 
