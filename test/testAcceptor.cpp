@@ -18,6 +18,7 @@ void newConnectionCallback(const std::shared_ptr<TcpConnection>& conn)
 void messageCallback(const std::shared_ptr<TcpConnection>& conn, Buffer* buf, int n)
 {
     LOG(INFO) << "read client ip : " << conn->clientIp() << n << " data : " << buf->retrieveAllAsSrting();
+    LOG(INFO) << " and connect name = " << conn->getName() << " address: " << conn.get();
     
     conn->sendData(conn->clientIp());
 }

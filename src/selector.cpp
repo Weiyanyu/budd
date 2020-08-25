@@ -41,7 +41,6 @@ void Selector::select(int timeout, std::vector<Channel*> &activeChannels)
 {
     int eventNum = epoll_wait(m_epollfd, m_reventsList.data(), m_reventsList.size(), timeout);
     if (eventNum > 0) {
-        LOG(INFO) << eventNum << " events happend";
         for (int i = 0; i < eventNum; i++) {
             int fd = m_reventsList[i].data.fd;
             auto channelIter = m_channelMaps.find(fd);

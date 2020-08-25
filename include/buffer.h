@@ -6,6 +6,7 @@
 #include <string>
 #include <cstring>
 #include <sys/uio.h>
+#include <glog/logging.h>
 
 class Buffer
 {

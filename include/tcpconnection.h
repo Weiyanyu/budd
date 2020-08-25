@@ -15,7 +15,7 @@ class EventLoop;
 
 class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 public:
-    TcpConnection(EventLoop* eventLoop, int sockfd, const char *clientIp);
+    TcpConnection(EventLoop* eventLoop, int sockfd, const char *clientIp, std::string name);
 
     typedef std::function<void(const std::shared_ptr<TcpConnection>&)> connectionCallback;
     typedef std::function<void(const std::shared_ptr<TcpConnection>&, Buffer*, int)> messageCallback;
@@ -46,6 +46,7 @@ public:
     }
 
     EventLoop* getEventLoop() { return m_eventLoop; }
+    std::string getName() { return m_name; }
 private:
 
     void handleRead();
@@ -65,6 +66,7 @@ private:
     std::string m_clientIp;
     int m_sockfd;
     State m_state;
+    std::string m_name;
 
     connectionCallback m_connectionCallbalk;
     messageCallback m_messageCallback;

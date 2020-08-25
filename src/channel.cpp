@@ -14,21 +14,26 @@ Channel::Channel(EventLoop* eventLoop, int fd)
 
 void Channel::handleEvents()
 {
-    if ((m_revents & Selector::HUP_EVENT) && !(m_revents & Selector::READ_EVENT)) {
-        if (m_closeCallback != nullptr) {
-            m_closeCallback();
-        }
-    }
+    // if ((m_revents & Selector::HUP_EVENT) && !(m_revents & Selector::READ_EVENT)) {
+    //     if (m_closeCallback != nullptr) {
+    //         LOG(INFO) << "close event!!!!!!!!!!!!!!!!!!!!!!!";
+    //         m_closeCallback();
+    //     }
+    // }
 
     if ((m_revents & Selector::ERROR_EVENT) && m_errorCallback != nullptr) {
+        LOG(INFO) << "error events";
         m_errorCallback();
     }
 
     if ((m_revents & Selector::READ_EVENT) && m_readCallback != nullptr) {
+        LOG(INFO) << "read events";
+
         m_readCallback();
     }
 
     if ((m_revents & Selector::WRITE_EVENT) && m_writeCallback != nullptr) {
+        LOG(INFO) << "write events";
         m_writeCallback();
     }
 }

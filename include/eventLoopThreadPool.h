@@ -23,7 +23,7 @@ private:
     std::vector<std::unique_ptr<EventLoopThread>> m_threads;
     std::vector<EventLoop*> m_loops;
     bool m_started;
-    int m_next;
+    size_t m_next;
 };
 
 #endif

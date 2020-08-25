@@ -2,12 +2,13 @@
 #include "eventLoop.h"
 #include "buffer.h"
 
-TcpConnection::TcpConnection(EventLoop *eventLoop, int sockfd, const char *clientIp)
+TcpConnection::TcpConnection(EventLoop *eventLoop, int sockfd, const char *clientIp, std::string name)
     : m_eventLoop(eventLoop),
       m_channel(new Channel(eventLoop, sockfd)),
       m_clientIp(clientIp),
       m_sockfd(sockfd),
-      m_state(NONE)
+      m_state(NONE),
+      m_name(name)
 {
     m_channel->registeReadCallback(std::bind(&TcpConnection::handleRead, this));
     m_channel->registeErrorCallback(std::bind(&TcpConnection::handleError, this));
@@ -33,6 +34,7 @@ void TcpConnection::handleRead()
     int savedErrono = 0;
     
     ssize_t n = m_inputBuffer.readFd(m_sockfd, &savedErrono);
+    LOG(INFO) << "handle read n : " << n;
     if (n == 0)
     {
         handleClose();
@@ -61,6 +63,7 @@ void TcpConnection::handleClose()
 
 void TcpConnection::handleError()
 {
+    LOG(INFO) << "connection name = " << getName() << "and thread id = " << m_eventLoop->getCurrentThreadId();
 
     LOG(ERROR) << "connection errro!!!  errno: " << strerror(errno);
 }
@@ -81,6 +84,7 @@ void TcpConnection::handleWrite()
             m_outputBuffer.retrieve(sendN);
             if (m_outputBuffer.readableBytes() == 0) {
                 m_channel->enableRead();
+                LOG(INFO) << "handleWitre finish";
                 if (m_state == DISCONNECTING) {
                     shutdownInLoop();
                 }
@@ -98,6 +102,7 @@ void TcpConnection::connectDestroyed()
     m_state = DISCONNECT;
     m_channel->disableEvents();
     m_eventLoop->removeChannel(m_channel.get());
+    close(m_channel->fd());
 }
 
 void TcpConnection::sendData(const std::string & data)
@@ -118,7 +123,7 @@ void TcpConnection::sendData(const std::string & data)
 void TcpConnection::sendDataInLoop(const std::string& data)
 {
     m_eventLoop->assertInLoopThread();
-    size_t sentN = write(m_sockfd, data.data(), data.size());
+    size_t sentN = send(m_sockfd, data.data(), data.size(), 0);
 
     if (sentN < 0)
     {
@@ -134,7 +139,7 @@ void TcpConnection::sendDataInLoop(const std::string& data)
     {
         const char *newDataBegin = data.data() + sentN;
         m_outputBuffer.append(newDataBegin, data.size() - sentN);
-        m_channel->eanbleWrite();
+        m_channel->enableWrite();
     }
 }
 

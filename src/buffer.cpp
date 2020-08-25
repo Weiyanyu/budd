@@ -8,10 +8,12 @@ Buffer::Buffer(size_t initialSize)
 
 }
 
+
 void Buffer::append(const char* data, size_t len)
 {
     ensureWriterableBytes(len);
     std::copy(data, data + len, writeableBegin());
+
     assert(len <= writeableBytes());
     m_writerIndex += len;
 }   
@@ -48,7 +50,7 @@ ssize_t Buffer::readFd(int socketFd, int* errorno)
     vec[1].iov_base = extraBuffer;
     vec[1].iov_len = sizeof(extraBuffer);
 
-    int ioctlCnt = oldWriteableBytes < sizeof(extraBuffer) ? 2 : 1;
+    int ioctlCnt = 2;
     size_t readN = readv(socketFd, vec, ioctlCnt);
     if (readN < 0) {
         *errorno = errno;
@@ -56,6 +58,7 @@ ssize_t Buffer::readFd(int socketFd, int* errorno)
         m_writerIndex += readN;
     } else {
         m_writerIndex = m_buffer.size();
+        LOG(INFO) << "buffer size: " << m_buffer.size() << " readN : " << readN << " oldWriteableBytes : " << oldWriteableBytes << "  data len " << readN - oldWriteableBytes << "writeable size "<< writeableBytes();
         append(extraBuffer, readN - oldWriteableBytes);
     }
     return readN;

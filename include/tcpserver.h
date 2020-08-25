@@ -5,6 +5,7 @@
 #include "tcpconnection.h"
 #include <unordered_map>
 #include "eventLoopThreadPool.h"
+#include <atomic>
 
 class Buffer;
 class EventLoop;
@@ -38,10 +39,11 @@ private:
     std::unique_ptr<Acceptor> m_acceptor;
     int m_port;
     bool m_started;
-    std::unordered_map<int, std::shared_ptr<TcpConnection>> m_connectionMaps;
+    std::unordered_map<std::string, std::shared_ptr<TcpConnection>> m_connectionMaps;
     connectionCallback m_newConnectionCallback;
     messageCallback m_messageCallback;
     std::shared_ptr<EventLoopThreadPool> m_loopPool;
+    std::atomic_ulong m_nextConnectionId;
 
 };
 

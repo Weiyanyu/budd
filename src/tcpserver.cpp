@@ -14,7 +14,8 @@ TcpServer::TcpServer(EventLoop* eventLoop, int port)
     m_acceptor(new Acceptor(eventLoop, port)),
     m_port(port),
     m_started(false),
-    m_loopPool(new EventLoopThreadPool(eventLoop, LOOP_POOL_SIZE))
+    m_loopPool(new EventLoopThreadPool(eventLoop, LOOP_POOL_SIZE)),
+    m_nextConnectionId(0)
 {
     m_acceptor->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this, _1, _2));
 }
@@ -36,15 +37,15 @@ void TcpServer::start()
 void TcpServer::newConnection(int connFd, const char* clientIp)
 {
     m_eventLoop->assertInLoopThread();
-
+    std::string connectionName = "conn_" + std::to_string(m_nextConnectionId++);
     EventLoop* ioLoop = m_loopPool->getNextLoop();
     std::shared_ptr<TcpConnection> conn = std::make_shared<TcpConnection>(
         ioLoop,
         connFd,
-        clientIp
+        clientIp,
+        connectionName
         );
-
-    m_connectionMaps[connFd] = conn;
+    m_connectionMaps[connectionName] = conn;
     conn->setConnnectionCallback(m_newConnectionCallback);
     conn->setMessageCallback(m_messageCallback);
     conn->setCloseCallback(std::bind(&TcpServer::removeConection, this, _1));
@@ -59,11 +60,11 @@ void TcpServer::removeConection(const std::shared_ptr<TcpConnection> &conn)
 void TcpServer::removeConnectionInLoop(const std::shared_ptr<TcpConnection> &conn)
 {
     m_eventLoop->assertInLoopThread();
-
     EventLoop* ioLoop = conn->getEventLoop();
-    assert(m_connectionMaps.count(conn->sockFd()) > 0);
+    LOG(INFO) << "connection name = " << conn->getName() << "and thread id = " << ioLoop->getCurrentThreadId();
+    assert(m_connectionMaps.count(conn->getName()) > 0);
 
-    m_connectionMaps.erase(conn->sockFd());
+    m_connectionMaps.erase(conn->getName());
 
     
     ioLoop->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));

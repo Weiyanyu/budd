@@ -65,7 +65,7 @@ void processRead(std::shared_ptr<Channel> clientChannel, char buffers[1024][BUFF
         close(fd);
         std::cout << "client force close connection!!!" << std::endl;
     } else {
-        clientChannel->eanbleWrite();
+        clientChannel->enableWrite();
     }
 }
 

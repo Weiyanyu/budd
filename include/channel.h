@@ -28,7 +28,7 @@ public:
         m_closeCallback = std::move(callback);
     }
 
-    void eanbleWrite() {
+    void enableWrite() {
         m_events = Selector::WRITE_EVENT; update();
     }
     void enableRead() {
