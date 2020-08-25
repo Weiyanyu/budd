@@ -22,7 +22,7 @@ Acceptor::Acceptor(EventLoop* eventLoop, int port)
 
 void Acceptor::listen()
 {
-    if (::listen(m_listenFd, 5) == -1)
+    if (::listen(m_listenFd, SOMAXCONN) == -1)
     {
         LOG(FATAL) << "listen error!!!";
     }

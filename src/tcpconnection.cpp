@@ -123,8 +123,7 @@ void TcpConnection::sendData(const std::string & data)
 void TcpConnection::sendDataInLoop(const std::string& data)
 {
     m_eventLoop->assertInLoopThread();
-    size_t sentN = send(m_sockfd, data.data(), data.size(), 0);
-
+    size_t sentN = write(m_sockfd, data.data(), data.size());
     if (sentN < 0)
     {
         if (errno != EWOULDBLOCK)
@@ -132,13 +131,13 @@ void TcpConnection::sendDataInLoop(const std::string& data)
             LOG(ERROR) << "send data error!!";
         }
     }
-
-    assert(sentN >= 0);
-
-    if (sentN < data.size())
+    size_t remain = data.size() - sentN;
+    assert(remain <= data.size());
+    
+    if (remain > 0)
     {
         const char *newDataBegin = data.data() + sentN;
-        m_outputBuffer.append(newDataBegin, data.size() - sentN);
+        m_outputBuffer.append(newDataBegin, remain);
         m_channel->enableWrite();
     }
 }

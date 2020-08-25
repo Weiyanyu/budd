@@ -11,7 +11,7 @@
 class Buffer
 {
 public:
-    static const size_t INITIAL_SIZE = 1024;
+    static const size_t INITIAL_SIZE = 1024 * 128;
     static const size_t PREPEND_SIZE = 8;
 
     explicit Buffer(size_t initialSize = INITIAL_SIZE);

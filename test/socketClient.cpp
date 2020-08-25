@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    while (true) {
+    // while (true) {
         send(socketFd, data, sizeof(data), 0);
         int len = recv(socketFd, buf, sizeof(buf), 0);
         if (std::strcmp("bye!", buf) == 0) {
@@ -52,8 +52,9 @@ int main(int argc, char* argv[]) {
         } else {
             std::cout << buf << std::endl;
         }
-    }
-
+    // }
+    shutdown(socketFd,SHUT_WR);
+    recv(socketFd, buf, sizeof(buf), 0);
     close(socketFd);
 
 }

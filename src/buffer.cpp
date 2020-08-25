@@ -42,7 +42,7 @@ void Buffer::reserve(size_t len)
 
 ssize_t Buffer::readFd(int socketFd, int* errorno)
 {
-    char extraBuffer[64 * 1024];
+    char extraBuffer[128 * 1024];
     struct iovec vec[2];
     size_t oldWriteableBytes = writeableBytes();
     vec[0].iov_base = begin() + m_writerIndex;
@@ -61,5 +61,6 @@ ssize_t Buffer::readFd(int socketFd, int* errorno)
         LOG(INFO) << "buffer size: " << m_buffer.size() << " readN : " << readN << " oldWriteableBytes : " << oldWriteableBytes << "  data len " << readN - oldWriteableBytes << "writeable size "<< writeableBytes();
         append(extraBuffer, readN - oldWriteableBytes);
     }
+
     return readN;
 }
