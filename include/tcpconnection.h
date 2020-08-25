@@ -44,6 +44,8 @@ public:
     std::string clientIp() {
         return m_clientIp;
     }
+
+    EventLoop* getEventLoop() { return m_eventLoop; }
 private:
 
     void handleRead();

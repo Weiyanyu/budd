@@ -37,6 +37,7 @@ public:
 
     void wakeup();
 
+    std::thread::id getCurrentThreadId() { return m_threadId; }
 private:
     void handleRead();
     void execTasks();
