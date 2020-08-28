@@ -7,6 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <functional>
+#include <signal.h>
 
 class Channel;
 class Selector;
@@ -55,5 +56,15 @@ private:
 
     bool m_callingTask;
 };
+
+class IgnoreSigPipe
+{
+public:
+    IgnoreSigPipe()
+    {
+        ::signal(SIGPIPE, SIG_IGN);
+    }
+};
+
 
 #endif

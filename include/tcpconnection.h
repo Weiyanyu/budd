@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <cstring>
 #include <utility>
+#include <netinet/tcp.h>
+#include <netinet/in.h>
 #include <sys/errno.h>
 
 #include "buffer.h"
@@ -47,6 +49,10 @@ public:
 
     EventLoop* getEventLoop() { return m_eventLoop; }
     std::string getName() { return m_name; }
+
+    void setTcpNoDelay(bool on);
+    void setKeepAlive(bool on);
+
 private:
 
     void handleRead();

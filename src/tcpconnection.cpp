@@ -159,3 +159,16 @@ void TcpConnection::shutdownInLoop()
         ::shutdown(m_sockfd, SHUT_WR);
     }
 }
+
+void TcpConnection::setTcpNoDelay(bool on)
+{
+    int option = on ? 1 : 0;
+    ::setsockopt(m_sockfd, IPPROTO_TCP, TCP_NODELAY, &option, static_cast<socklen_t>(sizeof(option)));
+}
+
+void TcpConnection::setKeepAlive(bool on)
+{
+    int option = on ? 1 : 0;
+    ::setsockopt(m_sockfd, SOL_SOCKET, SO_KEEPALIVE, &option, static_cast<socklen_t>(sizeof(option)));
+}
+

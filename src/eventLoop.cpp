@@ -5,6 +5,9 @@
 
 thread_local EventLoop* threadLocalEventLoop;
 
+IgnoreSigPipe initObj;
+
+
 int createEventFd()
 {
     int fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
