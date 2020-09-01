@@ -51,7 +51,8 @@ ssize_t Buffer::readFd(int socketFd, int* errorno)
     vec[1].iov_len = sizeof(extraBuffer);
 
     int ioctlCnt = 2;
-    size_t readN = readv(socketFd, vec, ioctlCnt);
+    size_t readN = 0;
+    readN = readv(socketFd, vec, ioctlCnt);
     if (readN < 0) {
         *errorno = errno;
     } else if (readN < oldWriteableBytes) {

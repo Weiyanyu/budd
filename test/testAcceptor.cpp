@@ -4,6 +4,7 @@
 #include "tcpserver.h"
 #include <sstream>
 #include "buffer.h"
+#include "timer.h"
 
 #include <string>
 
