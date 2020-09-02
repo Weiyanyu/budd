@@ -32,8 +32,9 @@ public:
     bool isRepeat() { return m_repeat; }
     long getId() { return m_id; }
     
-    bool operator<(const Timer &rhs) const {
-        return m_id < rhs.m_id;
+    bool operator<(const Timer &rhs) const 
+    {
+        return m_when < rhs.m_when;
     }
     
     //no need atomic
