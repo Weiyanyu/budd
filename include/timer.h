@@ -53,7 +53,7 @@ class TimerQueue
 {
 public:
     typedef std::function<void()> timerCallback;
-    static const time_t MICROSECOND_PERSECOND = 1000000;
+    static const time_t MICROSECOND_PERSECOND = 1000 * 1000;
 
     TimerQueue(EventLoop* loop);
     
@@ -72,7 +72,7 @@ private:
 
     
     void addTimerInLoop(Timer &&timer);
-    void enqueue(Timer &&timer);
+    bool enqueue(Timer &&timer);
 
 
     void findExpired(time_t nowTimeStamp, std::vector<std::pair<time_t, Timer>> &activeTimers);

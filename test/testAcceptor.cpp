@@ -24,6 +24,21 @@ void messageCallback(const std::shared_ptr<TcpConnection>& conn, Buffer* buf, in
     conn->sendData(conn->clientIp());
 }
 
+void timerCallbackRunAt()
+{
+    LOG(INFO) << "timer run at";
+}
+
+void timerCallbackRunAfter()
+{
+    LOG(INFO) << "timer run after";
+}
+
+void timerCallbackRunEvey()
+{
+    LOG(INFO) << "timer run ever";
+}
+
 int main() {
 
     EventLoop loop;
@@ -31,6 +46,11 @@ int main() {
     server.setConnectionCallback(newConnectionCallback);
     server.setMessageCallback(messageCallback);
     server.start();
+
+    loop.runAt(TimerQueue::now() + TimerQueue::MICROSECOND_PERSECOND * 2, timerCallbackRunAt);
+    loop.runAfter(TimerQueue::MICROSECOND_PERSECOND * 3, timerCallbackRunAfter);
+    loop.runEvey(TimerQueue::MICROSECOND_PERSECOND * 1, timerCallbackRunEvey);
+
 
     loop.loop();
 }

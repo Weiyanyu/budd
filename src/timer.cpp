@@ -59,9 +59,13 @@ void TimerQueue::handleRead()
     time_t nowTimeStamp = now();
     m_activeTimers.clear();
     readTimerfd(nowTimeStamp);
+    LOG(INFO) << "nowTimeSamp = " << nowTimeStamp;
+    LOG(INFO) << "activeTimer size init = " << m_activeTimers.size();
 
     findExpired(nowTimeStamp, m_activeTimers);
+
     for (auto &timer : m_activeTimers) {
+        LOG(INFO) << "timer when : " << timer.second.getExpiration();
         timer.second.start();
     }
     //重新把repete timer insert到队列里，且启动队列中的下一个timer的定时器
@@ -79,19 +83,26 @@ long TimerQueue::addTimer(timerCallback callback, time_t when, time_t interval)
 void TimerQueue::addTimerInLoop(Timer &&timer)
 {
     m_loop->assertInLoopThread();
-    enqueue(std::forward<Timer>(timer));
+    bool resetTimeFlag = enqueue(std::forward<Timer>(timer));
+    if (resetTimeFlag) {
+        setTime(timer.getExpiration());
+    }
 }
 
-void TimerQueue::enqueue(Timer &&timer)
+bool TimerQueue::enqueue(Timer &&timer)
 {
     time_t nowTimeStamp = now();
     assert(nowTimeStamp < timer.getExpiration());
     
-    m_timerSet.insert(std::make_pair<time_t, Timer>(timer.getExpiration(), std::forward<Timer>(timer)));
-    //如果是第一个，需要启动定时器timerfd
-    if (m_timerSet.size() == 1) {
-        setTime(timer.getExpiration());
+    bool resetLatestTime = false;
+
+    if (m_timerSet.size() == 1 || timer.getExpiration() < m_timerSet.begin()->first) {
+        resetLatestTime = true;
     }
+
+    m_timerSet.insert(std::make_pair<time_t, Timer>(timer.getExpiration(), std::forward<Timer>(timer)));
+
+    return resetLatestTime;
 }
 
 time_t TimerQueue::now()
@@ -107,7 +118,6 @@ void TimerQueue::findExpired(time_t nowTimeStamp, std::vector<std::pair<time_t, 
     std::pair<time_t, Timer> duumy(nowTimeStamp, duumyTimer);
     auto it = m_timerSet.lower_bound(duumy);
     assert(it == m_timerSet.end() || nowTimeStamp < it->first);
-
     std::copy(m_timerSet.begin(), it, std::back_inserter(activeTimers));
     m_timerSet.erase(m_timerSet.begin(), it);
 }

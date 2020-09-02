@@ -1,7 +1,8 @@
 #include "eventLoop.h"
 #include "channel.h"
 #include "selector.h"
-#include "sys/eventfd.h"
+#include <sys/eventfd.h>
+#include "timer.h"
 
 thread_local EventLoop* threadLocalEventLoop;
 
@@ -24,7 +25,8 @@ EventLoop::EventLoop()
     m_selector(new Selector(this)),
     m_wakeupFd(createEventFd()),
     m_wakeupChannel(new Channel(this, m_wakeupFd)),
-    m_callingTask(false)
+    m_callingTask(false),
+    m_timerQueue(new TimerQueue(this))
 {
     if (threadLocalEventLoop != nullptr) {
         LOG(FATAL) << "one thread only can have on event loop!!!";
@@ -145,4 +147,24 @@ void EventLoop::execTasks()
 
     m_callingTask = false;
 
+}
+
+long EventLoop::runAt(time_t when, timerCallback callback)
+{
+    return m_timerQueue->addTimer(std::move(callback), when, 0);
+}
+long EventLoop::runAfter(time_t delay, timerCallback callback)
+{
+    time_t when = TimerQueue::now() + delay;
+    return m_timerQueue->addTimer(std::move(callback), when, 0);
+}
+long EventLoop::runEvey(time_t interval, timerCallback callback)
+{
+    time_t when = TimerQueue::now() + interval;
+    return m_timerQueue->addTimer(std::move(callback), when, interval);
+}
+
+void EventLoop::cancelTimer(long timerId)
+{
+    m_timerQueue->cancelTimer(timerId);
 }

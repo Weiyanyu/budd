@@ -11,11 +11,13 @@
 
 class Channel;
 class Selector;
+class TimerQueue;
 
 class EventLoop {
 public:
 
     using taskFunc = std::function<void()>;
+    using timerCallback = std::function<void()>;
 
     EventLoop();
     ~EventLoop();
@@ -39,6 +41,11 @@ public:
     void wakeup();
 
     std::thread::id getCurrentThreadId() { return m_threadId; }
+
+    long runAt(time_t when, timerCallback callback);
+    long runAfter(time_t delay, timerCallback callback);
+    long runEvey(time_t interval, timerCallback callback);
+    void cancelTimer(long timerId);
 private:
     void handleRead();
     void execTasks();
@@ -53,8 +60,8 @@ private:
     std::mutex m_mutex;
     int m_wakeupFd;
     std::unique_ptr<Channel> m_wakeupChannel;
-
     bool m_callingTask;
+    std::unique_ptr<TimerQueue> m_timerQueue;
 };
 
 class IgnoreSigPipe
