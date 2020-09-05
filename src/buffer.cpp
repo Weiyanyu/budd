@@ -1,5 +1,8 @@
 #include "buffer.h"
 
+const char* Buffer::CRLF = "\r\n";
+
+
 Buffer::Buffer(size_t initialSize)
     :m_readerIndex(PREPEND_SIZE),
     m_writerIndex(PREPEND_SIZE),

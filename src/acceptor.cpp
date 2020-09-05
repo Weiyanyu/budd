@@ -1,18 +1,19 @@
 #include "acceptor.h"
 #include "eventLoop.h"
+#include <endian.h>
 
 Acceptor::Acceptor(EventLoop* eventLoop, int port)
     :m_port(port),
     m_listenning(false),
-    m_listenChannel(eventLoop, socket(AF_INET, SOCK_STREAM, 0)),
+    m_listenChannel(eventLoop, socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP)),
     m_listenFd(m_listenChannel.fd())
 {
     LOG_ASSERT(m_listenFd >= 0);
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_port = m_port;
-    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(m_port);
+    addr.sin_addr.s_addr = htobe32(INADDR_ANY);
 
     if (bind(m_listenFd, (const struct sockaddr *)&addr, sizeof(addr)) == -1)
     {

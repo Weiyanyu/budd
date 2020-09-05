@@ -3,6 +3,8 @@
 #include "channel.h"
 #include "acceptor.h"
 #include "buffer.h"
+#include "tcpconnection.h"
+
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -24,7 +26,7 @@ void TcpServer::start()
 {
     m_eventLoop->assertInLoopThread();
 
-   
+    LOG(INFO) << "tcp server start!";
     assert(m_acceptor->isListenning() == false);
 
     m_loopPool->start();
@@ -36,6 +38,7 @@ void TcpServer::start()
 
 void TcpServer::newConnection(int connFd, const char* clientIp)
 {
+    LOG(INFO) << "new connection";
     m_eventLoop->assertInLoopThread();
     std::string connectionName = "conn_" + std::to_string(m_nextConnectionId++);
     EventLoop* ioLoop = m_loopPool->getNextLoop();

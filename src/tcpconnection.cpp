@@ -19,8 +19,8 @@ TcpConnection::TcpConnection(EventLoop *eventLoop, int sockfd, const char *clien
 void TcpConnection::connectEstablished()
 {
     m_eventLoop->assertInLoopThread();
-    assert(m_state == NONE);
-    m_state = CONNECTED;
+    assert(m_state == State::NONE);
+    m_state = State::CONNECTED;
 
     m_connectionCallbalk(shared_from_this());
     m_channel->enableRead();
@@ -29,7 +29,6 @@ void TcpConnection::connectEstablished()
 void TcpConnection::handleRead()
 {
     m_eventLoop->assertInLoopThread();
-    assert(m_state == CONNECTED);
 
     int savedErrono = 0;
     
@@ -53,7 +52,7 @@ void TcpConnection::handleRead()
 void TcpConnection::handleClose()
 {
     m_eventLoop->assertInLoopThread();
-    assert(m_state == CONNECTED || m_state == DISCONNECTING);
+    assert(m_state == State::CONNECTED || m_state == State::DISCONNECTING);
 
     LOG(INFO) << "close connection";
 
@@ -71,7 +70,7 @@ void TcpConnection::handleError()
 void TcpConnection::handleWrite()
 {
     m_eventLoop->assertInLoopThread();
-    assert(m_state == CONNECTED);
+    assert(m_state == State::CONNECTED);
     //TODO: handleWrite
 
     int sendN = write(m_sockfd, m_outputBuffer.peek(), m_outputBuffer.readableBytes());
@@ -85,7 +84,7 @@ void TcpConnection::handleWrite()
             if (m_outputBuffer.readableBytes() == 0) {
                 m_channel->enableRead();
                 LOG(INFO) << "handleWitre finish";
-                if (m_state == DISCONNECTING) {
+                if (m_state == State::DISCONNECTING) {
                     shutdownInLoop();
                 }
             } else {
@@ -98,8 +97,8 @@ void TcpConnection::handleWrite()
 void TcpConnection::connectDestroyed()
 {
     m_eventLoop->assertInLoopThread();
-    assert(m_state == CONNECTED || m_state == DISCONNECTING);
-    m_state = DISCONNECT;
+    assert(m_state == State::CONNECTED || m_state == State::DISCONNECTING);
+    m_state = State::DISCONNECT;
     m_channel->disableEvents();
     m_eventLoop->removeChannel(m_channel.get());
     close(m_channel->fd());
@@ -108,16 +107,17 @@ void TcpConnection::connectDestroyed()
 void TcpConnection::sendData(const std::string & data)
 {
     m_eventLoop->assertInLoopThread();
-    assert(m_state == CONNECTED);
+    if (m_state == State::CONNECTED) {
+        if (m_eventLoop->isInLoopThread())
+        {
+            sendDataInLoop(data);
+        }
+        else
+        {
+            m_eventLoop->runInLoop(std::bind(&TcpConnection::sendDataInLoop, this, data));
+        }
+    }
 
-    if (m_eventLoop->isInLoopThread())
-    {
-        sendDataInLoop(data);
-    }
-    else
-    {
-        m_eventLoop->runInLoop(std::bind(&TcpConnection::sendDataInLoop, this, data));
-    }
 }
 
 void TcpConnection::sendDataInLoop(const std::string& data)
@@ -144,8 +144,7 @@ void TcpConnection::sendDataInLoop(const std::string& data)
 
 void TcpConnection::shutdown()
 {
-    if (m_state == CONNECTED) {
-        m_state = DISCONNECTING;
+    if (m_state == State::CONNECTED) {
         m_eventLoop->runInLoop(std::bind(&TcpConnection::shutdownInLoop, this));
     }
 
@@ -158,6 +157,8 @@ void TcpConnection::shutdownInLoop()
         //close write port
         ::shutdown(m_sockfd, SHUT_WR);
     }
+    m_state = State::DISCONNECTING;
+
 }
 
 void TcpConnection::setTcpNoDelay(bool on)

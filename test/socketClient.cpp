@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_port = 8000;
+    addr.sin_port = 9001;
     addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     if (connect(socketFd, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    // while (true) {
+    while (true) {
         send(socketFd, data, sizeof(data), 0);
         int len = recv(socketFd, buf, sizeof(buf), 0);
         if (std::strcmp("bye!", buf) == 0) {
@@ -52,7 +52,8 @@ int main(int argc, char* argv[]) {
         } else {
             std::cout << buf << std::endl;
         }
-    // }
+        sleep(0.5);
+    }
     shutdown(socketFd,SHUT_WR);
     recv(socketFd, buf, sizeof(buf), 0);
     close(socketFd);

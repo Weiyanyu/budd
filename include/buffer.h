@@ -7,12 +7,14 @@
 #include <cstring>
 #include <sys/uio.h>
 #include <glog/logging.h>
+#include <algorithm>
 
 class Buffer
 {
 public:
     static const size_t INITIAL_SIZE = 1024 * 128;
     static const size_t PREPEND_SIZE = 8;
+    static const char* CRLF;
 
     explicit Buffer(size_t initialSize = INITIAL_SIZE);
     //just use default copy, move constructor
@@ -26,8 +28,8 @@ public:
     const char *begin() const {return &*m_buffer.begin();}
     char *begin() { return &*m_buffer.begin();}
 
-    const char *writeableBegin() const{ return begin() + m_writerIndex; }
-    char *writeableBegin() { return begin() + m_writerIndex; }
+    const char* writeableBegin() const{ return begin() + m_writerIndex; }
+    char* writeableBegin() { return begin() + m_writerIndex; }
 
     size_t writerIndex() { return m_writerIndex; }
     size_t readerIndex() { return m_readerIndex; }
@@ -46,8 +48,8 @@ public:
     }
 
     void retrieve(size_t len) {
-        assert(len <= readableBytes());
         if (len < readableBytes()) {
+        assert(len <= readableBytes());
             m_readerIndex += len;
         } else {
             retrieveAll();
@@ -76,6 +78,19 @@ public:
     {
         return retrieveAsString(readableBytes());
     }
+
+    void retrieveUntil(const char* end)
+    {
+        assert(peek() <= end);
+        assert(end <= writeableBegin());
+        retrieve(end - peek());
+    }
+
+    const char* findCrlf() {
+        const char* crlf = std::search(peek(), (const char*)writeableBegin(), CRLF, CRLF + 2);
+        return crlf == writeableBegin() ? nullptr : crlf;
+    }
+
 
     ssize_t readFd(int socketFd, int* errorno);
 

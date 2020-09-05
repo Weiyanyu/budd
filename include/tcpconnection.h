@@ -53,6 +53,10 @@ public:
     void setTcpNoDelay(bool on);
     void setKeepAlive(bool on);
 
+    void setContext(std::shared_ptr<void> context) { m_context = context; }
+    std::shared_ptr<void> getContext() { return m_context; }
+
+    bool isConnected() { return m_state == State::CONNECTED;  }
 private:
 
     void handleRead();
@@ -80,6 +84,7 @@ private:
 
     Buffer m_inputBuffer;
     Buffer m_outputBuffer;
+    std::shared_ptr<void> m_context;
 
 };
 
