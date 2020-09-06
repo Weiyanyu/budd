@@ -38,7 +38,6 @@ void HttpServer::onMessage(const std::shared_ptr<TcpConnection>& conn, Buffer* b
         conn->shutdown();
         return;
     }
-
     if (context->isParseFinished()) {
         onRequest(conn, context->getRequest());
         context->clear();
@@ -47,12 +46,22 @@ void HttpServer::onMessage(const std::shared_ptr<TcpConnection>& conn, Buffer* b
 }
 void HttpServer::onRequest(const std::shared_ptr<TcpConnection>& conn, const HttpRequest& request)
 {
-    LOG(INFO) << "onRequest";
-    //TODO:
     //1. setResponseInfo
+    HttpResponse response;
+    std::string connectionValue = request.getHeader("Connection");
+    bool close = connectionValue == "close" ||
+    (request.httpVersion() == "HTTP/1.1" && connectionValue != "keep-alive");
+    response.setClose(close);
+
     //2. call callback function
+    m_httpCallback(request, response);
     //3. send data to client
+    Buffer buffer;
+    response.fillBuffer(&buffer);
     //4. if http connection close, set close and than shutdown connection
-    conn->sendData("HTTP/1.1 200 OK\r\n\r\n");
-    conn->shutdown();
+    conn->sendData(&buffer);
+
+    if (response.needClose()) {
+        conn->shutdown();
+    }
 }

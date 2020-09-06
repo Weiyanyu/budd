@@ -120,6 +120,21 @@ void TcpConnection::sendData(const std::string & data)
 
 }
 
+void TcpConnection::sendData(Buffer* buffer) 
+{
+    m_eventLoop->assertInLoopThread();
+    if (m_state == State::CONNECTED) {
+        if (m_eventLoop->isInLoopThread())
+        {
+            sendDataInLoop(buffer->retrieveAllAsSrting());
+        }
+        else
+        {
+            m_eventLoop->runInLoop(std::bind(&TcpConnection::sendDataInLoop, this, buffer->retrieveAllAsSrting()));
+        }
+    }
+}
+
 void TcpConnection::sendDataInLoop(const std::string& data)
 {
     m_eventLoop->assertInLoopThread();

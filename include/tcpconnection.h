@@ -38,6 +38,7 @@ public:
     void connectDestroyed();
 
     void sendData(const std::string &data);
+    void sendData(Buffer* buffer);
     void shutdown();
 
     int sockFd() {

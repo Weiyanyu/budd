@@ -97,7 +97,7 @@ bool HttpParser::parseHeaderLine(Buffer* buffer, const char* end, HttpRequest* r
     const char* colon = std::find(start, end, ':');
     
     if (colon != end) {
-        request->setHeader(std::string(start, colon), std::string(colon+1, end));
+        request->setHeader(std::string(start, colon), std::string(colon+2, end));
     } else {
         //empty line
     }
@@ -120,6 +120,13 @@ bool HttpParser::parseQueryParam(const char* start, const char* end, HttpRequest
             isSuccess = false;
             break;
         }
+    }
+    //process last element
+    const char* equal = std::find(start, end, '=');
+    if (equal != end) {
+        request->setQueryParam(std::string(start, equal), std::string(equal+1, end));
+    } else {
+        isSuccess = false;
     }
     return isSuccess;
 }

@@ -51,7 +51,7 @@ public:
     void setQueryParam(const std::string key, const std::string value) { m_query[key] = value; }
 
     //debug
-    void toString() {
+    const void toString() const {
         LOG(INFO) << "request method: " << m_method;
         LOG(INFO) << "request url: " << m_url;
         LOG(INFO) << "request path: " << m_path;
