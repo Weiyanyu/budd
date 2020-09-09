@@ -53,6 +53,10 @@ void HttpServer::onRequest(const std::shared_ptr<TcpConnection>& conn, const Htt
     (request.httpVersion() == "HTTP/1.1" && connectionValue != "keep-alive");
     response.setClose(close);
 
+    //set default info, user can change it in httpCallback
+    //set keyyp alive limit default
+    response.setKeepAliveLimit(5, 120);
+    
     //2. call callback function
     m_httpCallback(request, response);
     //3. send data to client

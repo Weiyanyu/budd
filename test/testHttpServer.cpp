@@ -5,11 +5,28 @@
 
 void httpCallback(const HttpRequest& req, HttpResponse& resp)
 {
-    resp.setStatusCode(HttpResponseStatusCode::OK);
-    resp.setStatusMessage("OK");
-    resp.setBody("Hello, World!!");
-    resp.setHeader("Content-Type", "text/plain;charset=utf-8");
+    LOG(INFO) << "req path : " << req.path();
+    if (req.path() == "/static/cool.jpeg") {
+        if (!resp.setFile("/home/weiyanyu/learn/cpp/budd/test/static/cool.jpeg")) {
+            resp.setStatusCode(HttpResponseStatusCode::NOT_FOUND);
+            resp.setStatusMessage(HttpResponse::getStatusMessageByCode(HttpResponseStatusCode::NOT_FOUND));
+        } else {
+            resp.setContentType(ContentType::IMAGE_JPEG);
+            resp.setStatusCode(HttpResponseStatusCode::OK);
+            resp.setStatusMessage(HttpResponse::getStatusMessageByCode(HttpResponseStatusCode::OK));
+        }
+
+    } else {
+        resp.setBody("Hello, World!!");
+        resp.setContentType(ContentType::TEXT_PLAIN);
+        resp.setStatusCode(HttpResponseStatusCode::OK);
+        resp.setStatusMessage(HttpResponse::getStatusMessageByCode(HttpResponseStatusCode::OK));
+    }
+
+
 }
+
+
 
 int main()
 {
