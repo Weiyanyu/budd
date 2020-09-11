@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include "tcpserver.h"
+#include "httpContext.h"
 
 class EventLoop;
 class TcpServer;
@@ -25,6 +26,8 @@ private:
     void onConnection(const std::shared_ptr<TcpConnection>& conn);
     void onMessage(const std::shared_ptr<TcpConnection>& conn, Buffer*, int n);
     void onRequest(const std::shared_ptr<TcpConnection>& conn, const HttpRequest& request);
+
+    void setRequestInfo(const std::shared_ptr<TcpConnection>& conn, const std::shared_ptr<HttpContext>& context);
 };
 
 #endif

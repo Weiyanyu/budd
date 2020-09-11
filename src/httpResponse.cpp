@@ -44,7 +44,6 @@ bool HttpResponse::setFile(const std::string& filename)
         LOG(ERROR) << "can't open file : " << filename;
         return false;
     }
-    LOG(INFO) << "start read";
 
     char buffer[1024];
     input.seekg(0, std::ios_base::end);

@@ -81,7 +81,6 @@ bool HttpParser::parseStartLine(Buffer* buffer, const char* end, HttpRequest* re
     if (isSuccess) {
         m_state = EXPECTHEADERLINE;
     }
-    LOG(INFO) << "process starline result : " << isSuccess;
     return isSuccess;
 }
 

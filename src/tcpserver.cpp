@@ -38,7 +38,7 @@ void TcpServer::start()
 
 void TcpServer::newConnection(int connFd, const char* clientIp)
 {
-    LOG(INFO) << "new connection";
+    DLOG(INFO) << "new connection";
     m_eventLoop->assertInLoopThread();
     std::string connectionName = "conn_" + std::to_string(m_nextConnectionId++);
     EventLoop* ioLoop = m_loopPool->getNextLoop();
@@ -49,6 +49,7 @@ void TcpServer::newConnection(int connFd, const char* clientIp)
         connectionName
         );
     m_connectionMaps[connectionName] = conn;
+
     conn->setConnnectionCallback(m_newConnectionCallback);
     conn->setMessageCallback(m_messageCallback);
     conn->setCloseCallback(std::bind(&TcpServer::removeConection, this, _1));
@@ -64,7 +65,6 @@ void TcpServer::removeConnectionInLoop(const std::shared_ptr<TcpConnection> &con
 {
     m_eventLoop->assertInLoopThread();
     EventLoop* ioLoop = conn->getEventLoop();
-    LOG(INFO) << "connection name = " << conn->getName() << "and thread id = " << ioLoop->getCurrentThreadId();
     assert(m_connectionMaps.count(conn->getName()) > 0);
 
     m_connectionMaps.erase(conn->getName());

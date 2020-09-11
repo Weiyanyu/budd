@@ -4,7 +4,7 @@ project(budd)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
-set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall -DNDEBUG")
 
 #for threasd
 
@@ -13,6 +13,7 @@ SET(EXECUTABLE_OUTPUT_PATH ../bin)
 
 SET(LINK_DIR /usr/local/lib)
 link_directories(${LINK_DIR})
+
 
 #for test
 foreach(target testHttpServer socketClient)

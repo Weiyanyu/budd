@@ -17,7 +17,6 @@ public:
 
     void clear()
     {
-        LOG(INFO) << "close previous request info";
         m_parseFinished = false;
         m_request.clear();
     }

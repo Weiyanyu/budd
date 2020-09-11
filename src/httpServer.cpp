@@ -39,6 +39,7 @@ void HttpServer::onMessage(const std::shared_ptr<TcpConnection>& conn, Buffer* b
         return;
     }
     if (context->isParseFinished()) {
+        setRequestInfo(conn, context);
         onRequest(conn, context->getRequest());
         context->clear();
     }
@@ -68,4 +69,10 @@ void HttpServer::onRequest(const std::shared_ptr<TcpConnection>& conn, const Htt
     if (response.needClose()) {
         conn->shutdown();
     }
+}
+
+void HttpServer::setRequestInfo(const std::shared_ptr<TcpConnection>& conn, const std::shared_ptr<HttpContext>& context)
+{
+    HttpRequest request = context->getRequest();
+    request.setRemoteAddress(conn->clientIp());
 }

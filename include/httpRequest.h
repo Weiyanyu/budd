@@ -14,6 +14,7 @@ public:
     const std::string url() const { return m_url; }
     const std::string path() const { return m_path; }
     const std::string httpVersion() const { return m_httpVersion; }
+    const std::string remoteAddress() const { return m_remoteAddress; }
 
     bool setMethod(const std::string method) { 
         m_method = std::move(method); 
@@ -26,9 +27,10 @@ public:
     }   
     return false;
     }
-    void setUrl(const std::string uri) { m_url = std::move(uri); }
-    void setPath(const std::string path) { m_path = std::move(path); }
-    void setHttpVersion(const std::string version) { m_httpVersion = std::move(version); }
+    void setUrl(const std::string &uri) { m_url = uri; }
+    void setPath(const std::string &path) { m_path = path; }
+    void setHttpVersion(const std::string &version) { m_httpVersion = version; }
+    void setRemoteAddress(const std::string &remoteAddress) { m_remoteAddress = remoteAddress; }
 
     const std::string getHeader(const std::string key) const
     {
@@ -38,9 +40,9 @@ public:
         }
         return "";
     }
-    void setHeader(const std::string key, const std::string value) { m_headers[key] = value; }
+    void setHeader(const std::string& key, const std::string& value) { m_headers[key] = value; }
 
-    const std::string getQueryParam(const std::string key) const
+    const std::string getQueryParam(const std::string& key) const
     { 
         auto it = m_query.find(key);
         if (it != m_query.end()) {
@@ -48,7 +50,7 @@ public:
         }
         return ""; 
     }
-    void setQueryParam(const std::string key, const std::string value) { m_query[key] = value; }
+    void setQueryParam(const std::string& key, const std::string& value) { m_query[key] = value; }
 
     //debug
     const void toString() const {
@@ -75,6 +77,7 @@ private:
     std::string m_path;
     std::unordered_map<std::string, std::string> m_query;
     std::string m_httpVersion;
+    std::string m_remoteAddress;
 
     std::unordered_map<std::string, std::string> m_headers;
 };

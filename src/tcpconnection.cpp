@@ -33,7 +33,7 @@ void TcpConnection::handleRead()
     int savedErrono = 0;
     
     ssize_t n = m_inputBuffer.readFd(m_sockfd, &savedErrono);
-    LOG(INFO) << "handle read n : " << n;
+    DLOG(INFO) << "handle read n : " << n;
     if (n == 0)
     {
         handleClose();
@@ -54,7 +54,7 @@ void TcpConnection::handleClose()
     m_eventLoop->assertInLoopThread();
     assert(m_state == State::CONNECTED || m_state == State::DISCONNECTING);
 
-    LOG(INFO) << "close connection";
+    DLOG(INFO) << "close connection";
 
     m_channel->disableEvents();
     m_closeCallback(shared_from_this());
@@ -71,7 +71,6 @@ void TcpConnection::handleWrite()
 {
     m_eventLoop->assertInLoopThread();
     assert(m_state == State::CONNECTED);
-    //TODO: handleWrite
 
     int sendN = write(m_sockfd, m_outputBuffer.peek(), m_outputBuffer.readableBytes());
     if (m_channel->isWriting()) {
@@ -83,12 +82,12 @@ void TcpConnection::handleWrite()
             m_outputBuffer.retrieve(sendN);
             if (m_outputBuffer.readableBytes() == 0) {
                 m_channel->enableRead();
-                LOG(INFO) << "handleWitre finish";
+                DLOG(INFO) << "handleWitre finish";
                 if (m_state == State::DISCONNECTING) {
                     shutdownInLoop();
                 }
             } else {
-                LOG(INFO) << "continue write more data";
+                DLOG(INFO) << "continue write more data";
             }
         }
     }
