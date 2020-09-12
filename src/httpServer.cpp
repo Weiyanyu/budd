@@ -58,8 +58,13 @@ void HttpServer::onRequest(const std::shared_ptr<TcpConnection>& conn, const Htt
     //set keyyp alive limit default
     response.setKeepAliveLimit(5, 120);
     
-    //2. call callback function
-    m_httpCallback(request, response);
+    //2. process request
+    if (!processRequest(request, response)) {
+        conn->sendData("HTTP/1.1 404 NOT FOUND\r\n\r\n");
+        conn->shutdown();
+    }
+
+    response.setStatusMessage(HttpResponse::getStatusMessageByCode(response.getStatusCode()));
     //3. send data to client
     Buffer buffer;
     response.fillBuffer(&buffer);
@@ -76,3 +81,64 @@ void HttpServer::setRequestInfo(const std::shared_ptr<TcpConnection>& conn, cons
     HttpRequest request = context->getRequest();
     request.setRemoteAddress(conn->clientIp());
 }
+
+void HttpServer::handleFunc(std::string path, HttpHandleFunc func, HttpMethod method) 
+{ 
+    switch (method)
+    {
+    case HttpMethod::GET:
+        m_handleGetFuncMaps[path] = func;
+        break;
+    case HttpMethod::HEAD:
+        m_handleHeadFuncMaps[path] = func;
+        break;
+    case HttpMethod::POST:
+        m_handlePostFuncMaps[path] = func;
+        break;
+    case HttpMethod::PUT:
+        m_handlePutFuncMaps[path] = func;
+        break;
+    case HttpMethod::DELETE:
+        m_handleDeleteFuncMaps[path] = func;
+        break;
+    default:
+        break;
+    }
+    m_handleGetFuncMaps[path] = std::move(func); 
+}
+
+
+bool HttpServer::processRequest(const HttpRequest& request, HttpResponse& response)
+{
+    std::string path = request.path();
+    HttpMethod method = request.method();
+    HttpHandleFunc handleFunc;
+    switch (method)
+    {
+    case HttpMethod::GET:
+        handleFunc = m_handleGetFuncMaps[path];
+        break;
+    case HttpMethod::HEAD:
+        handleFunc = m_handleHeadFuncMaps[path];
+        break;
+    case HttpMethod::POST:
+        handleFunc = m_handlePostFuncMaps[path];
+        break;
+    case HttpMethod::PUT:
+        handleFunc = m_handlePutFuncMaps[path];
+        break;
+    case HttpMethod::DELETE:
+        handleFunc = m_handleDeleteFuncMaps[path];
+        break;
+    default:
+        break;
+    }
+    if (handleFunc == nullptr) {
+        DLOG(ERROR) << "can not find handle func for path : " << path;
+        return false;
+    }
+    handleFunc(request, response);
+
+    return true;
+}
+

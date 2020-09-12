@@ -40,6 +40,8 @@ public:
 
     }
 
+    HttpResponseStatusCode getStatusCode() { return m_statusCode; }
+
     void setStatusMessage(const std::string& statusMessage) { m_statusMessage = statusMessage; }
     void setStatusCode(HttpResponseStatusCode code) { m_statusCode = code; }
     void setClose(bool on) { m_close = on; }

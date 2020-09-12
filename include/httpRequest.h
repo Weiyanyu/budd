@@ -5,28 +5,27 @@
 #include <glog/logging.h>
 
 
+enum HttpMethod {
+    NONE,
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    HEAD,
+};
+
 class HttpRequest
 {
 public:
     void clear(); //clear previous infomation
 
-    const std::string method() const { return m_method; }
+    HttpMethod method() const { return m_method; }
     const std::string url() const { return m_url; }
     const std::string path() const { return m_path; }
     const std::string httpVersion() const { return m_httpVersion; }
     const std::string remoteAddress() const { return m_remoteAddress; }
 
-    bool setMethod(const std::string method) { 
-        m_method = std::move(method); 
-        if (m_method == "POST" || 
-            m_method == "GET" || 
-            m_method == "HEAD" || 
-            m_method == "DELETE" || 
-            m_method == "PUT") {
-        return true;
-    }   
-    return false;
-    }
+    bool setMethod(const std::string method);
     void setUrl(const std::string &uri) { m_url = uri; }
     void setPath(const std::string &path) { m_path = path; }
     void setHttpVersion(const std::string &version) { m_httpVersion = version; }
@@ -72,7 +71,7 @@ public:
     }
 
 private:
-    std::string m_method;
+    HttpMethod m_method;
     std::string m_url;
     std::string m_path;
     std::unordered_map<std::string, std::string> m_query;
