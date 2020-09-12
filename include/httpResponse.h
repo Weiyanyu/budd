@@ -5,32 +5,9 @@
 #include <glog/logging.h>
 #include <string>
 #include <sstream>
+#include "httpParameter.h"
 
 class Buffer;
-
-enum HttpResponseStatusCode {
-    UNKNOWN,
-    OK = 200,
-    NOCONTENT = 204,
-    BAD_REQUEST = 400,
-    NOT_FOUND = 404,
-    INTERNAL_SERVER_ERROR = 500,
-};
-
-class ContentType {
-public:
-    //TEXT
-    static const std::string TEXT_PLAIN;
-    static const std::string TEXT_HTML;
-    //IMAGE
-    static const std::string IMAGE_JPEG;
-    static const std::string IMAGE_PNG;
-
-    //Application
-    static const std::string APPLICATION_JSON;
-};
-
-
 class HttpResponse
 {
 public:
@@ -60,14 +37,6 @@ public:
 
     bool needClose() { return m_close; }
 
-    static std::string getStatusMessageByCode(HttpResponseStatusCode code) {
-        if (httpResponseStatusMessage.count(code) < 0) {
-            LOG(ERROR) << "status code error";
-            return "";
-        }
-        return httpResponseStatusMessage[code];
-
-    }
 private:
     static std::unordered_map<HttpResponseStatusCode, std::string> httpResponseStatusMessage;
 

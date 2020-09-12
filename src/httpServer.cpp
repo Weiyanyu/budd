@@ -64,7 +64,7 @@ void HttpServer::onRequest(const std::shared_ptr<TcpConnection>& conn, const Htt
         conn->shutdown();
     }
 
-    response.setStatusMessage(HttpResponse::getStatusMessageByCode(response.getStatusCode()));
+    response.setStatusMessage(HttpUtil::getStatusMessageByCode(response.getStatusCode()));
     //3. send data to client
     Buffer buffer;
     response.fillBuffer(&buffer);

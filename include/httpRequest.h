@@ -3,16 +3,8 @@
 #include <string>
 #include <unordered_map>
 #include <glog/logging.h>
+#include "httpParameter.h"
 
-
-enum HttpMethod {
-    NONE,
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    HEAD,
-};
 
 class HttpRequest
 {

@@ -60,23 +60,3 @@ bool HttpResponse::setFile(const std::string& filename)
     setBody(body);
     return true;
 }
-
-std::unordered_map<HttpResponseStatusCode, std::string> HttpResponse::httpResponseStatusMessage = 
-{
-    {UNKNOWN, "unknown"},
-    {OK, "OK"},
-    {NOCONTENT, "No Content"},
-    {BAD_REQUEST, "Bad Request"},
-    {NOT_FOUND, "Not Found"},
-    {INTERNAL_SERVER_ERROR, "Internal Server Error"},
-};
-
-
-//--------- CcontentType definetion ---------------
-const std::string ContentType::TEXT_PLAIN = "text/plain;charset=utf-8";
-const std::string ContentType::TEXT_HTML = "text/html;charset=utf-8";
-
-const std::string ContentType::IMAGE_JPEG = "image/jpeg";
-const std::string ContentType::IMAGE_PNG = "image/png";
-
-const std::string ContentType::APPLICATION_JSON = "application/json;charset=utf-8";
