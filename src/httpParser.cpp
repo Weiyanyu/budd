@@ -15,11 +15,12 @@ bool HttpParser::parse(Buffer* buffer, std::shared_ptr<HttpContext> context)
             if (crlf != nullptr) {
                 if (m_state == EXPECTSTARTLINE) {
                     //parseStartLine need set m_state
-                    isSuccess = parseStartLine(buffer, crlf, req);
+                    isSuccess = parseStartLine(buffer->peek(), crlf, req);
                 } else if (m_state == EXPECTHEADERLINE) {
                     //parseHeaderLine need set m_state
-                    isSuccess = parseHeaderLine(buffer, crlf, req);                    
+                    isSuccess = parseHeaderLine(buffer->peek(), crlf, req);                    
                 } else if (m_state == EXPECTBODY) {
+                    isSuccess = parseQueryBody(buffer->peek(), crlf, req);
                     m_state = FINISH;
                 }
                 if (isSuccess) {
@@ -43,11 +44,10 @@ bool HttpParser::parse(Buffer* buffer, std::shared_ptr<HttpContext> context)
  * 
  * 
  * */
-bool HttpParser::parseStartLine(Buffer* buffer, const char* end, HttpRequest* request)
+bool HttpParser::parseStartLine(const char* start, const char* end, HttpRequest* request)
 {
     bool isSuccess = false;
     //1. process method
-    const char* start = buffer->peek();
     const char* space = std::find(start, end, ' ');
     if (space != end && request->setMethod(std::string(start, space))) {
         std::string method(start, space);
@@ -89,10 +89,9 @@ bool HttpParser::parseStartLine(Buffer* buffer, const char* end, HttpRequest* re
  * if occur some error or occur empty line, will return false
  * 
  * */
-bool HttpParser::parseHeaderLine(Buffer* buffer, const char* end, HttpRequest* request)
+bool HttpParser::parseHeaderLine(const char* start, const char* end, HttpRequest* request)
 {
     bool isSuccess = true;
-    const char* start = buffer->peek();
     const char* colon = std::find(start, end, ':');
     
     if (colon != end) {
@@ -128,4 +127,9 @@ bool HttpParser::parseQueryParam(const char* start, const char* end, HttpRequest
         isSuccess = false;
     }
     return isSuccess;
+}
+
+bool HttpParser::parseQueryBody(const char* start, const char* end, HttpRequest* request)
+{
+    return true;
 }
