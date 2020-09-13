@@ -2,11 +2,11 @@
 #include "eventLoop.h"
 #include <endian.h>
 
-Acceptor::Acceptor(EventLoop* eventLoop, int port)
-    :m_port(port),
-    m_listenning(false),
-    m_listenChannel(eventLoop, socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP)),
-    m_listenFd(m_listenChannel.fd())
+Acceptor::Acceptor(EventLoop *eventLoop, int port)
+    : m_port(port),
+      m_listenning(false),
+      m_listenChannel(eventLoop, socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP)),
+      m_listenFd(m_listenChannel.fd())
 {
     LOG_ASSERT(m_listenFd >= 0);
 
@@ -46,10 +46,12 @@ void Acceptor::accept()
     std::memset(clientIP, 0, sizeof(clientIP));
 
     inet_ntop(AF_INET, &clientAddr, clientIP, INET_ADDRSTRLEN);
-    if (connFd >= 0 && m_newConnectionCallback != nullptr) {
+    if (connFd >= 0 && m_newConnectionCallback != nullptr)
+    {
         m_newConnectionCallback(connFd, clientIP);
     }
-    else {
+    else
+    {
         //close fd
         ::close(connFd);
     }

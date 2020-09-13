@@ -14,7 +14,7 @@ class Buffer
 public:
     static const size_t INITIAL_SIZE = 1024 * 128;
     static const size_t PREPEND_SIZE = 8;
-    static const char* CRLF;
+    static const char *CRLF;
 
     explicit Buffer(size_t initialSize = INITIAL_SIZE);
     //just use default copy, move constructor
@@ -25,11 +25,11 @@ public:
 
     void append(const char *data, size_t len);
 
-    const char *begin() const {return &*m_buffer.begin();}
-    char *begin() { return &*m_buffer.begin();}
+    const char *begin() const { return &*m_buffer.begin(); }
+    char *begin() { return &*m_buffer.begin(); }
 
-    const char* writeableBegin() const{ return begin() + m_writerIndex; }
-    char* writeableBegin() { return begin() + m_writerIndex; }
+    const char *writeableBegin() const { return begin() + m_writerIndex; }
+    char *writeableBegin() { return begin() + m_writerIndex; }
 
     size_t writerIndex() { return m_writerIndex; }
     size_t readerIndex() { return m_readerIndex; }
@@ -39,7 +39,7 @@ public:
 
     size_t prependableBytes() { return m_readerIndex; }
 
-    const char* peek() const { return begin() + m_readerIndex; }
+    const char *peek() const { return begin() + m_readerIndex; }
     int peekInt() const
     {
         int res;
@@ -47,22 +47,27 @@ public:
         return res;
     }
 
-    void retrieve(size_t len) {
-        if (len < readableBytes()) {
-        assert(len <= readableBytes());
+    void retrieve(size_t len)
+    {
+        if (len < readableBytes())
+        {
+            assert(len <= readableBytes());
             m_readerIndex += len;
-        } else {
+        }
+        else
+        {
             retrieveAll();
         }
     }
 
-    void retrieveAll() 
+    void retrieveAll()
     {
         m_readerIndex = PREPEND_SIZE;
         m_writerIndex = PREPEND_SIZE;
     }
 
-    void retrieveInt() {
+    void retrieveInt()
+    {
         retrieve(sizeof(int));
     }
 
@@ -79,20 +84,20 @@ public:
         return retrieveAsString(readableBytes());
     }
 
-    void retrieveUntil(const char* end)
+    void retrieveUntil(const char *end)
     {
         assert(peek() <= end);
         assert(end <= writeableBegin());
         retrieve(end - peek());
     }
 
-    const char* findCrlf() {
-        const char* crlf = std::search(peek(), (const char*)writeableBegin(), CRLF, CRLF + 2);
+    const char *findCrlf()
+    {
+        const char *crlf = std::search(peek(), (const char *)writeableBegin(), CRLF, CRLF + 2);
         return crlf == writeableBegin() ? nullptr : crlf;
     }
 
-
-    ssize_t readFd(int socketFd, int* errorno);
+    ssize_t readFd(int socketFd, int *errorno);
 
 private:
     size_t m_readerIndex;

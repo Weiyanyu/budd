@@ -13,30 +13,30 @@ class Channel;
 class Selector;
 class TimerQueue;
 
-class EventLoop {
+class EventLoop
+{
 public:
-
     using taskFunc = std::function<void()>;
     using timerCallback = std::function<void()>;
 
     EventLoop();
     ~EventLoop();
 
-    void updateChannel(Channel* ch);
-    void removeChannel(Channel* ch);
-
+    void updateChannel(Channel *ch);
+    void removeChannel(Channel *ch);
 
     void loop();
     void quit();
-    bool isInLoopThread() {
+    bool isInLoopThread()
+    {
         return std::this_thread::get_id() == m_threadId;
     }
 
     void assertInLoopThread();
 
-    EventLoop* getEventLoopInThread();
-    void runInLoop(const taskFunc& t);
-    void queueInLoop(const taskFunc& t);
+    EventLoop *getEventLoopInThread();
+    void runInLoop(const taskFunc &t);
+    void queueInLoop(const taskFunc &t);
 
     void wakeup();
 
@@ -46,6 +46,7 @@ public:
     long runAfter(time_t delay, timerCallback callback);
     long runEvey(time_t interval, timerCallback callback);
     void cancelTimer(long timerId);
+
 private:
     void handleRead();
     void execTasks();
@@ -54,7 +55,7 @@ private:
     bool m_quit;
     std::thread::id m_threadId;
     std::unique_ptr<Selector> m_selector;
-    std::vector<Channel*> m_activeChannelList;
+    std::vector<Channel *> m_activeChannelList;
 
     std::vector<taskFunc> m_taskQ;
     std::mutex m_mutex;
@@ -72,6 +73,5 @@ public:
         ::signal(SIGPIPE, SIG_IGN);
     }
 };
-
 
 #endif

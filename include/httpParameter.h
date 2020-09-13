@@ -5,7 +5,8 @@
 #include <unordered_map>
 #include <glog/logging.h>
 
-enum HttpResponseStatusCode {
+enum HttpResponseStatusCode
+{
     UNKNOWN,
     OK = 200,
     NOCONTENT = 204,
@@ -14,7 +15,8 @@ enum HttpResponseStatusCode {
     INTERNAL_SERVER_ERROR = 500,
 };
 
-class ContentType {
+class ContentType
+{
 public:
     //TEXT
     static const std::string TEXT_PLAIN;
@@ -22,14 +24,15 @@ public:
     //IMAGE
     static const std::string IMAGE_JPEG;
     static const std::string IMAGE_PNG;
- 
+
     //Application
     static const std::string APPLICATION_JSON;
     static const std::string APPLICATION_OCTEC_STREAM;
     static const std::string APPLICATION_FORM;
 };
 
-enum HttpMethod {
+enum HttpMethod
+{
     NONE,
     GET,
     POST,
@@ -38,14 +41,11 @@ enum HttpMethod {
     HEAD,
 };
 
-class HttpUtil {
+class HttpUtil
+{
 public:
     static const std::unordered_map<HttpResponseStatusCode, std::string> httpResponseStatusMessage;
     static std::string getStatusMessageByCode(HttpResponseStatusCode code);
 };
-
-
-
-
 
 #endif

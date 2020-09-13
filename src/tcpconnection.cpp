@@ -31,7 +31,7 @@ void TcpConnection::handleRead()
     m_eventLoop->assertInLoopThread();
 
     int savedErrono = 0;
-    
+
     ssize_t n = m_inputBuffer.readFd(m_sockfd, &savedErrono);
     DLOG(INFO) << "handle read n : " << n;
     if (n == 0)
@@ -71,20 +71,28 @@ void TcpConnection::handleWrite()
     m_eventLoop->assertInLoopThread();
     assert(m_state == State::CONNECTED);
     int sendN = write(m_sockfd, m_outputBuffer.peek(), m_outputBuffer.readableBytes());
-    if (m_channel->isWriting()) {
-        if (sendN < 0) {
+    if (m_channel->isWriting())
+    {
+        if (sendN < 0)
+        {
             LOG(ERROR) << "send data error";
             m_channel->enableRead();
-        } else {
+        }
+        else
+        {
             //clear
             m_outputBuffer.retrieve(sendN);
-            if (m_outputBuffer.readableBytes() == 0) {
+            if (m_outputBuffer.readableBytes() == 0)
+            {
                 m_channel->enableRead();
                 DLOG(INFO) << "handleWitre finish";
-                if (m_state == State::DISCONNECTING) {
+                if (m_state == State::DISCONNECTING)
+                {
                     shutdownInLoop();
                 }
-            } else {
+            }
+            else
+            {
                 DLOG(INFO) << "continue write more data";
             }
         }
@@ -101,10 +109,11 @@ void TcpConnection::connectDestroyed()
     close(m_channel->fd());
 }
 
-void TcpConnection::sendData(const std::string & data)
+void TcpConnection::sendData(const std::string &data)
 {
     m_eventLoop->assertInLoopThread();
-    if (m_state == State::CONNECTED) {
+    if (m_state == State::CONNECTED)
+    {
         if (m_eventLoop->isInLoopThread())
         {
             sendDataInLoop(data);
@@ -114,13 +123,13 @@ void TcpConnection::sendData(const std::string & data)
             m_eventLoop->runInLoop(std::bind(&TcpConnection::sendDataInLoop, this, data));
         }
     }
-
 }
 
-void TcpConnection::sendData(Buffer* buffer) 
+void TcpConnection::sendData(Buffer *buffer)
 {
     m_eventLoop->assertInLoopThread();
-    if (m_state == State::CONNECTED) {
+    if (m_state == State::CONNECTED)
+    {
         if (m_eventLoop->isInLoopThread())
         {
             sendDataInLoop(buffer->retrieveAllAsSrting());
@@ -132,7 +141,7 @@ void TcpConnection::sendData(Buffer* buffer)
     }
 }
 
-void TcpConnection::sendDataInLoop(const std::string& data)
+void TcpConnection::sendDataInLoop(const std::string &data)
 {
     LOG(INFO) << "send data";
 
@@ -147,7 +156,7 @@ void TcpConnection::sendDataInLoop(const std::string& data)
     }
     size_t remain = data.size() - sentN;
     assert(remain <= data.size());
-    
+
     if (remain > 0)
     {
         const char *newDataBegin = data.data() + sentN;
@@ -158,21 +167,21 @@ void TcpConnection::sendDataInLoop(const std::string& data)
 
 void TcpConnection::shutdown()
 {
-    if (m_state == State::CONNECTED) {
+    if (m_state == State::CONNECTED)
+    {
         m_eventLoop->runInLoop(std::bind(&TcpConnection::shutdownInLoop, this));
     }
-
 }
 
 void TcpConnection::shutdownInLoop()
 {
     m_eventLoop->assertInLoopThread();
-    if (!m_channel->isWriting()) {
+    if (!m_channel->isWriting())
+    {
         //close write port
         ::shutdown(m_sockfd, SHUT_WR);
     }
     m_state = State::DISCONNECTING;
-
 }
 
 void TcpConnection::setTcpNoDelay(bool on)
@@ -186,4 +195,3 @@ void TcpConnection::setKeepAlive(bool on)
     int option = on ? 1 : 0;
     ::setsockopt(m_sockfd, SOL_SOCKET, SO_KEEPALIVE, &option, static_cast<socklen_t>(sizeof(option)));
 }
-

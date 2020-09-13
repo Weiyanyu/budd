@@ -6,16 +6,16 @@
 
 class HttpRequest;
 class Buffer;
-class HttpContext : public std::enable_shared_from_this<HttpContext> {
+class HttpContext : public std::enable_shared_from_this<HttpContext>
+{
 public:
-    HttpContext() 
-        :m_parser()
+    HttpContext()
+        : m_parser()
     {
-
     }
     HttpRequest getRequest() { return m_request; }
-    HttpRequest* getRequestPointer(){ return &m_request; }
-    bool praseRequest(Buffer* buffer);
+    HttpRequest *getRequestPointer() { return &m_request; }
+    bool praseRequest(Buffer *buffer);
 
     void setParseFinish(bool finished) { m_parseFinished = finished; }
     bool isParseFinished() { return m_parseFinished; }

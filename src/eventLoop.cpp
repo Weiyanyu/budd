@@ -4,34 +4,36 @@
 #include <sys/eventfd.h>
 #include "timer.h"
 
-thread_local EventLoop* threadLocalEventLoop;
+thread_local EventLoop *threadLocalEventLoop;
 
 IgnoreSigPipe initObj;
-
 
 int createEventFd()
 {
     int fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-    if (fd < 0) {
+    if (fd < 0)
+    {
         LOG(FATAL) << "failed to create event fd";
     }
     return fd;
 }
 
 EventLoop::EventLoop()
-    :m_looping(false),
-    m_quit(false),
-    m_threadId(std::this_thread::get_id()),
-    m_selector(new Selector(this)),
-    m_wakeupFd(createEventFd()),
-    m_wakeupChannel(new Channel(this, m_wakeupFd)),
-    m_callingTask(false),
-    m_timerQueue(new TimerQueue(this))
+    : m_looping(false),
+      m_quit(false),
+      m_threadId(std::this_thread::get_id()),
+      m_selector(new Selector(this)),
+      m_wakeupFd(createEventFd()),
+      m_wakeupChannel(new Channel(this, m_wakeupFd)),
+      m_callingTask(false),
+      m_timerQueue(new TimerQueue(this))
 {
-    if (threadLocalEventLoop != nullptr) {
+    if (threadLocalEventLoop != nullptr)
+    {
         LOG(FATAL) << "one thread only can have on event loop!!!";
     }
-    else {
+    else
+    {
         threadLocalEventLoop = this;
     }
 
@@ -39,14 +41,14 @@ EventLoop::EventLoop()
     m_wakeupChannel->enableRead();
 }
 
-void EventLoop::updateChannel(Channel* ch)
+void EventLoop::updateChannel(Channel *ch)
 {
     assert(ch->eventLoop() == this);
     assertInLoopThread();
     m_selector->updateChannel(ch);
 }
 
-void EventLoop::removeChannel(Channel* ch)
+void EventLoop::removeChannel(Channel *ch)
 {
     assert(ch->eventLoop() == this);
     assertInLoopThread();
@@ -56,11 +58,13 @@ void EventLoop::removeChannel(Channel* ch)
 void EventLoop::loop()
 {
     m_looping = true;
-    while (m_quit == false) {
+    while (m_quit == false)
+    {
 
         m_activeChannelList.clear();
         m_selector->select(-1, m_activeChannelList);
-        for (auto channel : m_activeChannelList) {
+        for (auto channel : m_activeChannelList)
+        {
             channel->handleEvents();
         }
         execTasks();
@@ -75,7 +79,8 @@ void EventLoop::quit()
 
 void EventLoop::assertInLoopThread()
 {
-    if (m_threadId != std::this_thread::get_id()) {
+    if (m_threadId != std::this_thread::get_id())
+    {
         LOG(FATAL) << "one thread only can have on event loop!!!";
     }
 }
@@ -84,31 +89,33 @@ EventLoop::~EventLoop()
 {
     threadLocalEventLoop = nullptr;
 }
-EventLoop* EventLoop::getEventLoopInThread()
+EventLoop *EventLoop::getEventLoopInThread()
 {
     assertInLoopThread();
     return threadLocalEventLoop;
 }
 
-
-void EventLoop::runInLoop(const taskFunc& t)
+void EventLoop::runInLoop(const taskFunc &t)
 {
-    if (isInLoopThread()) {
+    if (isInLoopThread())
+    {
         t();
     }
-    else {
+    else
+    {
         queueInLoop(t);
     }
 }
 
-void EventLoop::queueInLoop(const taskFunc& t)
+void EventLoop::queueInLoop(const taskFunc &t)
 {
     {
         std::lock_guard<std::mutex> guard(m_mutex);
         m_taskQ.push_back(t);
     }
 
-    if (!isInLoopThread() || m_callingTask) {
+    if (!isInLoopThread() || m_callingTask)
+    {
         wakeup();
     }
 }
@@ -125,7 +132,6 @@ void EventLoop::handleRead()
     read(m_wakeupFd, &one, sizeof(one));
 }
 
-
 /**
  *  this func will called by multi thread.
  *  so we must use lock to protect.
@@ -141,12 +147,12 @@ void EventLoop::execTasks()
         tempTaskQ.swap(m_taskQ);
     }
 
-    for (taskFunc t : tempTaskQ) {
+    for (taskFunc t : tempTaskQ)
+    {
         t();
     }
 
     m_callingTask = false;
-
 }
 
 long EventLoop::runAt(time_t when, timerCallback callback)

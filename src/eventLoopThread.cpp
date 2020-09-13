@@ -2,15 +2,13 @@
 #include "eventLoop.h"
 
 EventLoopThread::EventLoopThread(const std::string name)
-    :m_name(name),
-     m_started(false),
-     m_eventLoop(nullptr)
+    : m_name(name),
+      m_started(false),
+      m_eventLoop(nullptr)
 {
-
 }
 
-
-EventLoop* EventLoopThread::start()
+EventLoop *EventLoopThread::start()
 {
     //no need lock
     assert(m_started == false);

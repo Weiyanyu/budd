@@ -9,39 +9,53 @@
 
 class EventLoop;
 
-class Channel {
+class Channel
+{
 public:
     typedef std::function<void()> eventCallback;
 
-    Channel(EventLoop* eventLoop, int fd);
+    Channel(EventLoop *eventLoop, int fd);
 
-    void registeReadCallback(eventCallback callback) {
+    void registeReadCallback(eventCallback callback)
+    {
         m_readCallback = std::move(callback);
     }
-    void registeWriteCallback(eventCallback callback) {
+    void registeWriteCallback(eventCallback callback)
+    {
         m_writeCallback = std::move(callback);
     }
-    void registeErrorCallback(eventCallback callback) {
+    void registeErrorCallback(eventCallback callback)
+    {
         m_errorCallback = std::move(callback);
     }
-    void registeCloseCallback(eventCallback callback) {
+    void registeCloseCallback(eventCallback callback)
+    {
         m_closeCallback = std::move(callback);
     }
 
-    void enableWrite() {
-        m_events = Selector::WRITE_EVENT; update();
+    void enableWrite()
+    {
+        m_events = Selector::WRITE_EVENT;
+        update();
     }
-    void enableRead() {
-        m_events = Selector::READ_EVENT; update();
+    void enableRead()
+    {
+        m_events = Selector::READ_EVENT;
+        update();
     }
-    void enableError() {
-        m_events = Selector::ERROR_EVENT; update();
+    void enableError()
+    {
+        m_events = Selector::ERROR_EVENT;
+        update();
     }
-    void disableEvents() {
-        m_events = Selector::EMPTY_EVENT; update();
+    void disableEvents()
+    {
+        m_events = Selector::EMPTY_EVENT;
+        update();
     }
 
-    bool isWriting() {
+    bool isWriting()
+    {
         return m_events & Selector::WRITE_EVENT;
     }
 
@@ -50,25 +64,29 @@ public:
     void handleEvents();
 
     //getter and setter
-    int fd() {
+    int fd()
+    {
         return m_fd;
     }
-    int events() {
+    int events()
+    {
         return m_events;
     }
-    int revents() {
+    int revents()
+    {
         return m_revents;
     }
-    void setRevents(int revents) {
+    void setRevents(int revents)
+    {
         m_revents = revents;
     }
-    EventLoop* eventLoop() {
+    EventLoop *eventLoop()
+    {
         return m_eventLoop;
     }
 
-
 private:
-    EventLoop* m_eventLoop;
+    EventLoop *m_eventLoop;
 
     int m_fd;
     int m_events;
@@ -79,9 +97,7 @@ private:
     eventCallback m_errorCallback;
     eventCallback m_closeCallback;
 
-
     void update();
-
 };
 
 #endif

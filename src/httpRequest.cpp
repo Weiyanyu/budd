@@ -11,20 +11,31 @@ void HttpRequest::clear()
     m_formBody.clear();
     m_remoteAddress = "";
 }
-bool HttpRequest::setMethod(const std::string method) {
-    if (method == "GET") {
+bool HttpRequest::setMethod(const std::string method)
+{
+    if (method == "GET")
+    {
         m_method = HttpMethod::GET;
-    } else if (method == "POST") {
+    }
+    else if (method == "POST")
+    {
         m_method = HttpMethod::POST;
-    } else if (method == "PUT") {
+    }
+    else if (method == "PUT")
+    {
         m_method = HttpMethod::PUT;
-    } else if (method == "DELETE") {
+    }
+    else if (method == "DELETE")
+    {
         m_method = HttpMethod::DELETE;
-    } else if (method == "HEAD") {
+    }
+    else if (method == "HEAD")
+    {
         m_method = HttpMethod::HEAD;
-    } else {
+    }
+    else
+    {
         return false;
     }
     return true;
 }
-

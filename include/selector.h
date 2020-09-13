@@ -12,7 +12,8 @@
 class EventLoop;
 class Channel;
 
-class Selector {
+class Selector
+{
 public:
     static const int READ_EVENT = EPOLLIN | EPOLLPRI;
     static const int WRITE_EVENT = EPOLLOUT;
@@ -20,18 +21,17 @@ public:
     static const int HUP_EVENT = EPOLLHUP;
     static const int EMPTY_EVENT = 0;
 
-    Selector(EventLoop* m_eventLoop);
+    Selector(EventLoop *m_eventLoop);
 
-    void select(int timeout, std::vector<Channel*> &activeChannels);
-    void updateChannel(Channel* ch);
-    void removeChannel(Channel* ch);
+    void select(int timeout, std::vector<Channel *> &activeChannels);
+    void updateChannel(Channel *ch);
+    void removeChannel(Channel *ch);
 
 private:
-    EventLoop* m_eventLoop;
-    std::unordered_map<int, Channel*> m_channelMaps;  //channel map
-    std::vector<struct epoll_event> m_reventsList;   //events list
+    EventLoop *m_eventLoop;
+    std::unordered_map<int, Channel *> m_channelMaps; //channel map
+    std::vector<struct epoll_event> m_reventsList;    //events list
 
     int m_epollfd;
-
 };
 #endif

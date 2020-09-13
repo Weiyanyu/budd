@@ -11,17 +11,17 @@ class EventLoop;
 class EventLoopThreadPool
 {
 public:
-    EventLoopThreadPool(EventLoop* bootstrapEventLoop, int loopNum);
+    EventLoopThreadPool(EventLoop *bootstrapEventLoop, int loopNum);
     void start();
-    EventLoop* getNextLoop();
+    EventLoop *getNextLoop();
 
 private:
-    EventLoop* m_bootstrapEventLoop;
+    EventLoop *m_bootstrapEventLoop;
 
     int m_loopNum;
-    
+
     std::vector<std::unique_ptr<EventLoopThread>> m_threads;
-    std::vector<EventLoop*> m_loops;
+    std::vector<EventLoop *> m_loops;
     bool m_started;
     size_t m_next;
 };

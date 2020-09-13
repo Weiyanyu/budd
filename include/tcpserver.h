@@ -11,22 +11,25 @@
 class Buffer;
 class EventLoop;
 class Acceptor;
-class TcpServer {
+class TcpServer
+{
 public:
-    typedef std::function<void(const std::shared_ptr<TcpConnection>& conn)> connectionCallback;
-    typedef std::function<void(const std::shared_ptr<TcpConnection>& conn, Buffer*, int n)> messageCallback;
-    typedef std::function<void(const std::shared_ptr<TcpConnection>& conn)> onCloseCallback;
+    typedef std::function<void(const std::shared_ptr<TcpConnection> &conn)> connectionCallback;
+    typedef std::function<void(const std::shared_ptr<TcpConnection> &conn, Buffer *, int n)> messageCallback;
+    typedef std::function<void(const std::shared_ptr<TcpConnection> &conn)> onCloseCallback;
 
     static const int LOOP_POOL_SIZE = 8;
 
-    TcpServer(EventLoop* eventLoop, int port);
+    TcpServer(EventLoop *eventLoop, int port);
 
     void start();
 
-    void setConnectionCallback(connectionCallback cb) {
+    void setConnectionCallback(connectionCallback cb)
+    {
         m_newConnectionCallback = std::move(cb);
     }
-    void setMessageCallback(messageCallback cb) {
+    void setMessageCallback(messageCallback cb)
+    {
         m_messageCallback = std::move(cb);
     }
 
@@ -34,9 +37,9 @@ public:
     void removeConnectionInLoop(const std::shared_ptr<TcpConnection> &conn);
 
 private:
-    void newConnection(int connFd, const char* port);
+    void newConnection(int connFd, const char *port);
 
-    EventLoop* m_eventLoop;
+    EventLoop *m_eventLoop;
     std::unique_ptr<Acceptor> m_acceptor;
     int m_port;
     bool m_started;
@@ -45,7 +48,6 @@ private:
     messageCallback m_messageCallback;
     std::shared_ptr<EventLoopThreadPool> m_loopPool;
     std::atomic_ulong m_nextConnectionId;
-
 };
 
 #endif

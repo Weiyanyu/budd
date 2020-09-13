@@ -11,22 +11,22 @@ const std::string ContentType::APPLICATION_JSON = "application/json;charset=utf-
 const std::string ContentType::APPLICATION_OCTEC_STREAM = "application/octet-stream";
 const std::string ContentType::APPLICATION_FORM = "application/x-www-form-urlencoded";
 
-
 // ----------------- Http Util ---------------------
-const std::unordered_map<HttpResponseStatusCode, std::string> HttpUtil::httpResponseStatusMessage = 
-{
-    {UNKNOWN, "unknown"},
-    {OK, "OK"},
-    {NOCONTENT, "No Content"},
-    {BAD_REQUEST, "Bad Request"},
-    {NOT_FOUND, "Not Found"},
-    {INTERNAL_SERVER_ERROR, "Internal Server Error"},
+const std::unordered_map<HttpResponseStatusCode, std::string> HttpUtil::httpResponseStatusMessage =
+    {
+        {UNKNOWN, "unknown"},
+        {OK, "OK"},
+        {NOCONTENT, "No Content"},
+        {BAD_REQUEST, "Bad Request"},
+        {NOT_FOUND, "Not Found"},
+        {INTERNAL_SERVER_ERROR, "Internal Server Error"},
 };
 
-std::string HttpUtil::getStatusMessageByCode(HttpResponseStatusCode code) 
+std::string HttpUtil::getStatusMessageByCode(HttpResponseStatusCode code)
 {
     auto it = httpResponseStatusMessage.find(code);
-    if (it == httpResponseStatusMessage.end()) {
+    if (it == httpResponseStatusMessage.end())
+    {
         LOG(ERROR) << "status code error";
         return "";
     }

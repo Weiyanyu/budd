@@ -1,7 +1,7 @@
 #ifndef BUDDTIMER
 #define BUDDTIMER
 
-#include <unistd.h> 
+#include <unistd.h>
 #include <signal.h>
 #include <sys/time.h>
 #include <functional>
@@ -13,7 +13,6 @@
 #include "channel.h"
 #include <atomic>
 #include <algorithm>
-
 
 class EventLoop;
 class Timer
@@ -27,20 +26,20 @@ public:
 
     void start();
     void restart();
-    
+
     time_t getExpiration() { return m_when; }
     bool isRepeat() { return m_repeat; }
     long getId() { return m_id; }
-    
-    bool operator<(const Timer &rhs) const 
+
+    bool operator<(const Timer &rhs) const
     {
         return m_when < rhs.m_when;
     }
-    
+
     //no need atomic
     static long generateId() { return globalId++; }
+
 private:
-    
     timerCallback m_timerCallback;
 
     time_t m_when;
@@ -49,15 +48,13 @@ private:
     long m_id;
 };
 
-
 class TimerQueue
 {
 public:
     typedef std::function<void()> timerCallback;
     static const time_t MICROSECOND_PERSECOND = 1000 * 1000;
 
-    TimerQueue(EventLoop* loop);
-    
+    TimerQueue(EventLoop *loop);
 
     static time_t now();
 
@@ -71,10 +68,8 @@ private:
     void setTime(time_t when);
     void resetTime(time_t nowTimeStamp);
 
-    
     void addTimerInLoop(Timer &&timer);
     bool enqueue(Timer &&timer);
-
 
     void findExpired(time_t nowTimeStamp, std::vector<std::pair<time_t, Timer>> &activeTimers);
 
@@ -83,7 +78,7 @@ private:
 
     void readTimerfd(time_t nowTimeStamp);
 
-    EventLoop* m_loop;
+    EventLoop *m_loop;
     int m_timerfd;
     Channel m_channel;
     std::set<std::pair<time_t, Timer>> m_timerSet;

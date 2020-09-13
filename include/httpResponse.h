@@ -11,29 +11,29 @@ class Buffer;
 class HttpResponse
 {
 public:
-    HttpResponse() 
-    : m_statusCode(HttpResponseStatusCode::UNKNOWN)
+    HttpResponse()
+        : m_statusCode(HttpResponseStatusCode::UNKNOWN)
     {
-
     }
 
     HttpResponseStatusCode getStatusCode() { return m_statusCode; }
 
-    void setStatusMessage(const std::string& statusMessage) { m_statusMessage = statusMessage; }
+    void setStatusMessage(const std::string &statusMessage) { m_statusMessage = statusMessage; }
     void setStatusCode(HttpResponseStatusCode code) { m_statusCode = code; }
     void setClose(bool on) { m_close = on; }
-    void setBody(const std::string& body) { m_body = body; }
-    void setHeader(const std::string& key, const std::string& value) { m_headers[key] = value; }
+    void setBody(const std::string &body) { m_body = body; }
+    void setHeader(const std::string &key, const std::string &value) { m_headers[key] = value; }
     void setContentType(const std::string contentType) { setHeader("Content-Type", contentType); }
-    void setKeepAliveLimit(int max, int timeout) {
+    void setKeepAliveLimit(int max, int timeout)
+    {
         std::stringstream ss;
-        ss << "max=" << max << ", timeout="<<timeout;
+        ss << "max=" << max << ", timeout=" << timeout;
         setHeader("Keep-Alive", ss.str());
     }
 
-    bool setFile(const std::string& filename);
+    bool setFile(const std::string &filename);
 
-    void fillBuffer(Buffer* buffer);
+    void fillBuffer(Buffer *buffer);
 
     bool needClose() { return m_close; }
 
@@ -46,7 +46,5 @@ private:
     bool m_close;
     std::string m_body;
 };
-
-
 
 #endif

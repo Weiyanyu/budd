@@ -13,20 +13,23 @@
 
 class EventLoop;
 
-class Acceptor {
+class Acceptor
+{
 public:
-    typedef std::function<void(int fd, const char* ip)> newConnectionCallback;
+    typedef std::function<void(int fd, const char *ip)> newConnectionCallback;
 
-    Acceptor(EventLoop* eventLoop, int port);
+    Acceptor(EventLoop *eventLoop, int port);
 
     void listen();
     void accept();
 
-    void setNewConnectionCallback(newConnectionCallback callback) {
+    void setNewConnectionCallback(newConnectionCallback callback)
+    {
         m_newConnectionCallback = std::move(callback);
     }
 
-    bool isListenning() {
+    bool isListenning()
+    {
         return m_listenning;
     }
 

@@ -18,7 +18,7 @@ ThreadPool::ThreadPool(int workerCount)
                     //2. wait condition is this->m_stop == true(quit thread pool) or task is not empty
                     this->m_condition.wait(lock, [this]() {
                         return this->m_stop || !this->m_tasks.empty();
-                        });
+                    });
 
                     //3. if quit thread poll and taks is empty, it's mean we don't need worker any more, so return
                     if (this->m_stop && this->m_tasks.empty())
@@ -34,7 +34,7 @@ ThreadPool::ThreadPool(int workerCount)
                 //run task
                 task();
             }
-            });
+        });
     }
 }
 
@@ -55,4 +55,3 @@ ThreadPool::~ThreadPool()
         worker.join();
     }
 }
-
