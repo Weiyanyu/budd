@@ -6,7 +6,6 @@
 
 bool HttpParser::parse(Buffer *buffer, std::shared_ptr<HttpContext> context)
 {
-    std::string data(buffer->peek(), buffer->readableBytes());
     bool isSuccess = false;
     bool hasNextLine = true;
     HttpRequest *req = context->getRequestPointer();
