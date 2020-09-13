@@ -21,6 +21,16 @@ void handleImage(const HttpRequest& req, HttpResponse& resp) {
     }
 }
 
+void handlePost(const HttpRequest& req, HttpResponse& resp)
+{
+    std::string name = req.getFromBody("name");
+
+    resp.setBody("Hello, " + name);
+
+    resp.setContentType(ContentType::TEXT_PLAIN);
+    resp.setStatusCode(HttpResponseStatusCode::OK);
+}
+
 
 
 int main()
@@ -29,6 +39,7 @@ int main()
     HttpServer server(&loop, 9001);
     server.handleFunc("/", handleHome, HttpMethod::GET);
     server.handleFunc("/static/cool.jpeg", handleImage, HttpMethod::GET);
+    server.handleFunc("/hello", handlePost, HttpMethod::POST);
     server.start();
     loop.loop();
     return 0;

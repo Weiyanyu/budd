@@ -1,16 +1,19 @@
 #include "buffer.h"
 #include "httpContext.h"
 #include "httpParser.h"
+#include "httpParameter.h"
 #include <iostream>
 
 bool HttpParser::parse(Buffer* buffer, std::shared_ptr<HttpContext> context) 
 {
+    std::string data(buffer->peek(), buffer->readableBytes());
+    LOG(INFO) << data;
     bool isSuccess = false;
     bool hasNextLine = true;
-    m_state = EXPECTSTARTLINE;
     HttpRequest* req = context->getRequestPointer();
     while (hasNextLine) {
-        if (m_state != INVALID || m_state != FINISH) {
+        if (m_state == EXPECTSTARTLINE || m_state == EXPECTHEADERLINE) {
+
             const char* crlf = buffer->findCrlf();
             if (crlf != nullptr) {
                 if (m_state == EXPECTSTARTLINE) {
@@ -18,10 +21,7 @@ bool HttpParser::parse(Buffer* buffer, std::shared_ptr<HttpContext> context)
                     isSuccess = parseStartLine(buffer->peek(), crlf, req);
                 } else if (m_state == EXPECTHEADERLINE) {
                     //parseHeaderLine need set m_state
-                    isSuccess = parseHeaderLine(buffer->peek(), crlf, req);                    
-                } else if (m_state == EXPECTBODY) {
-                    isSuccess = parseQueryBody(buffer->peek(), crlf, req);
-                    m_state = FINISH;
+                    isSuccess = parseHeaderLine(buffer->peek(), crlf, req);       
                 }
                 if (isSuccess) {
                     //process buffer
@@ -32,10 +32,19 @@ bool HttpParser::parse(Buffer* buffer, std::shared_ptr<HttpContext> context)
             } else {
                 hasNextLine = false;
             }
+        } else if (m_state == EXPECTBODY) {
+            if (m_state == EXPECTBODY) {
+                isSuccess = parseQueryBody(buffer->peek(), buffer->peek() + buffer->readableBytes(), req);
+            }   
+            if (isSuccess) {
+                buffer->retrieveAll();
+            }
+            hasNextLine = false;
         } else {
             hasNextLine = false;
         }
     }
+
     return isSuccess;
 }
 
@@ -98,8 +107,18 @@ bool HttpParser::parseHeaderLine(const char* start, const char* end, HttpRequest
         request->setHeader(std::string(start, colon), std::string(colon+2, end));
     } else {
         //empty line
-    }
+        if (request->contentLenth() > 0) {
+            request->setHasBody(true);
+        }
 
+        if (request->contentType() == ContentType::APPLICATION_FORM && 
+            request->method() == HttpMethod::POST && 
+            request->hasBody()) {
+            m_state = EXPECTBODY;
+        } else {
+            m_state = EXPECTSTARTLINE;
+        }
+    }
     return isSuccess;
 
 }
@@ -107,6 +126,7 @@ bool HttpParser::parseHeaderLine(const char* start, const char* end, HttpRequest
 bool HttpParser::parseQueryParam(const char* start, const char* end, HttpRequest* request)
 {
     bool isSuccess = true;
+
     const char* et = std::find(start, end, '&');
     while (et != end) {
         const char* equal = std::find(start, et, '=');
@@ -131,5 +151,41 @@ bool HttpParser::parseQueryParam(const char* start, const char* end, HttpRequest
 
 bool HttpParser::parseQueryBody(const char* start, const char* end, HttpRequest* request)
 {
-    return true;
+    bool isSuccess = true;
+    if (start == end) {
+        if (!request->hasBody()) {
+            m_state = EXPECTSTARTLINE;
+        }
+        return true;
+    }
+    if (request->contentType() == ContentType::APPLICATION_FORM) {
+        //parse form body
+        const char* et = std::find(start, end, '&');
+        while (et != end) {
+            const char* equal = std::find(start, et, '=');
+            if (equal != et) {
+                request->setFormBody(std::string(start, equal), std::string(equal+1, et));
+                start = et + 1;
+                et = std::find(start, end, '&');
+            } else {
+                isSuccess = false;
+                break;
+            }
+        }
+        //process last element
+        const char* equal = std::find(start, end, '=');
+        if (equal != end) {
+            request->setFormBody(std::string(start, equal), std::string(equal+1, end));
+        } else {
+            isSuccess = false;
+        }
+        isSuccess = true;
+    }
+    if (isSuccess) {
+        m_state = EXPECTSTARTLINE;
+        request->setHasBody(false);
+    } else {
+        m_state = INVALID;
+    }
+    return isSuccess;
 }

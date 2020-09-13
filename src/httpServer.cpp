@@ -38,10 +38,14 @@ void HttpServer::onMessage(const std::shared_ptr<TcpConnection>& conn, Buffer* b
         conn->shutdown();
         return;
     }
+    // context->getRequest().toString();
     if (context->isParseFinished()) {
         setRequestInfo(conn, context);
         onRequest(conn, context->getRequest());
         context->clear();
+    } else {
+        conn->sendData("HTTP/1.1 100 Continue\r\n\r\n");
+        return;
     }
 
 }

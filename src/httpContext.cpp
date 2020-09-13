@@ -1,11 +1,11 @@
 #include "httpContext.h"
 #include "buffer.h"
-#include "httpParser.h"
 
 bool HttpContext::praseRequest(Buffer* buffer)
 {
-    HttpParser parser;
-    bool isSuccess = parser.parse(buffer, shared_from_this());
-    setParseFinish();//set flag
+    bool isSuccess = m_parser.parse(buffer, shared_from_this());
+    if (isSuccess && !m_request.hasBody()) {
+        setParseFinish(true);//set flag
+    }
     return isSuccess;
 }

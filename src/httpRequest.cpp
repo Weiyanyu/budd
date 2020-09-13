@@ -8,6 +8,8 @@ void HttpRequest::clear()
     m_httpVersion = "";
     m_query.clear();
     m_headers.clear();
+    m_formBody.clear();
+    m_remoteAddress = "";
 }
 bool HttpRequest::setMethod(const std::string method) {
     if (method == "GET") {

@@ -22,9 +22,11 @@ public:
     //IMAGE
     static const std::string IMAGE_JPEG;
     static const std::string IMAGE_PNG;
-
+ 
     //Application
     static const std::string APPLICATION_JSON;
+    static const std::string APPLICATION_OCTEC_STREAM;
+    static const std::string APPLICATION_FORM;
 };
 
 enum HttpMethod {

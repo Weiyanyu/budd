@@ -68,8 +68,6 @@ void TcpServer::removeConnectionInLoop(const std::shared_ptr<TcpConnection> &con
     assert(m_connectionMaps.count(conn->getName()) > 0);
 
     m_connectionMaps.erase(conn->getName());
-
-    
     ioLoop->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
 
 }

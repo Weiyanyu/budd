@@ -40,7 +40,6 @@ void TcpConnection::handleRead()
     }
     else if (n < 0)
     {
-        errno = savedErrono;
         handleError();
     }
     else
@@ -71,7 +70,6 @@ void TcpConnection::handleWrite()
 {
     m_eventLoop->assertInLoopThread();
     assert(m_state == State::CONNECTED);
-
     int sendN = write(m_sockfd, m_outputBuffer.peek(), m_outputBuffer.readableBytes());
     if (m_channel->isWriting()) {
         if (sendN < 0) {
@@ -136,6 +134,8 @@ void TcpConnection::sendData(Buffer* buffer)
 
 void TcpConnection::sendDataInLoop(const std::string& data)
 {
+    LOG(INFO) << "send data";
+
     m_eventLoop->assertInLoopThread();
     size_t sentN = write(m_sockfd, data.data(), data.size());
     if (sentN < 0)

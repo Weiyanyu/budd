@@ -8,6 +8,8 @@ const std::string ContentType::IMAGE_JPEG = "image/jpeg";
 const std::string ContentType::IMAGE_PNG = "image/png";
 
 const std::string ContentType::APPLICATION_JSON = "application/json;charset=utf-8";
+const std::string ContentType::APPLICATION_OCTEC_STREAM = "application/octet-stream";
+const std::string ContentType::APPLICATION_FORM = "application/x-www-form-urlencoded";
 
 
 // ----------------- Http Util ---------------------
