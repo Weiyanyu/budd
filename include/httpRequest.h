@@ -19,6 +19,9 @@ public:
     const std::string contentType() const { return getHeader("Content-Type"); }
     const size_t contentLenth() const { 
         std::string lengthStr = getHeader("Content-Length");
+        if (lengthStr == "") {
+            return 0;
+        }
         return (size_t)std::stoi(lengthStr);
     }
     const bool hasBody() const { return m_hasBody; }

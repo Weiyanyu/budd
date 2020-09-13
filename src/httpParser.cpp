@@ -7,19 +7,18 @@
 bool HttpParser::parse(Buffer* buffer, std::shared_ptr<HttpContext> context) 
 {
     std::string data(buffer->peek(), buffer->readableBytes());
-    LOG(INFO) << data;
     bool isSuccess = false;
     bool hasNextLine = true;
     HttpRequest* req = context->getRequestPointer();
     while (hasNextLine) {
-        if (m_state == EXPECTSTARTLINE || m_state == EXPECTHEADERLINE) {
+        if (m_state == HttpParser::EXPECTSTARTLINE || m_state == HttpParser::EXPECTHEADERLINE) {
 
             const char* crlf = buffer->findCrlf();
             if (crlf != nullptr) {
-                if (m_state == EXPECTSTARTLINE) {
+                if (m_state == HttpParser::EXPECTSTARTLINE) {
                     //parseStartLine need set m_state
                     isSuccess = parseStartLine(buffer->peek(), crlf, req);
-                } else if (m_state == EXPECTHEADERLINE) {
+                } else if (m_state == HttpParser::EXPECTHEADERLINE) {
                     //parseHeaderLine need set m_state
                     isSuccess = parseHeaderLine(buffer->peek(), crlf, req);       
                 }
@@ -32,9 +31,9 @@ bool HttpParser::parse(Buffer* buffer, std::shared_ptr<HttpContext> context)
             } else {
                 hasNextLine = false;
             }
-        } else if (m_state == EXPECTBODY) {
-            if (m_state == EXPECTBODY) {
-                isSuccess = parseQueryBody(buffer->peek(), buffer->peek() + buffer->readableBytes(), req);
+        } else if (m_state == HttpParser::EXPECTBODY) {
+            if (m_state == HttpParser::EXPECTBODY) {
+                isSuccess = parseFormBody(buffer->peek(), buffer->peek() + buffer->readableBytes(), req);
             }   
             if (isSuccess) {
                 buffer->retrieveAll();
@@ -88,7 +87,7 @@ bool HttpParser::parseStartLine(const char* start, const char* end, HttpRequest*
         }
     }
     if (isSuccess) {
-        m_state = EXPECTHEADERLINE;
+        m_state = HttpParser::EXPECTHEADERLINE;
     }
     return isSuccess;
 }
@@ -114,9 +113,9 @@ bool HttpParser::parseHeaderLine(const char* start, const char* end, HttpRequest
         if (request->contentType() == ContentType::APPLICATION_FORM && 
             request->method() == HttpMethod::POST && 
             request->hasBody()) {
-            m_state = EXPECTBODY;
+            m_state = HttpParser::EXPECTBODY;
         } else {
-            m_state = EXPECTSTARTLINE;
+            m_state = HttpParser::EXPECTSTARTLINE;
         }
     }
     return isSuccess;
@@ -149,12 +148,12 @@ bool HttpParser::parseQueryParam(const char* start, const char* end, HttpRequest
     return isSuccess;
 }
 
-bool HttpParser::parseQueryBody(const char* start, const char* end, HttpRequest* request)
+bool HttpParser::parseFormBody(const char* start, const char* end, HttpRequest* request)
 {
     bool isSuccess = true;
     if (start == end) {
         if (!request->hasBody()) {
-            m_state = EXPECTSTARTLINE;
+            m_state = HttpParser::EXPECTSTARTLINE;
         }
         return true;
     }
@@ -182,10 +181,10 @@ bool HttpParser::parseQueryBody(const char* start, const char* end, HttpRequest*
         isSuccess = true;
     }
     if (isSuccess) {
-        m_state = EXPECTSTARTLINE;
+        m_state = HttpParser::EXPECTSTARTLINE;
         request->setHasBody(false);
     } else {
-        m_state = INVALID;
+        m_state = HttpParser::INVALID;
     }
     return isSuccess;
 }
