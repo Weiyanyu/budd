@@ -12,9 +12,10 @@ const std::string ContentType::APPLICATION_OCTEC_STREAM = "application/octet-str
 const std::string ContentType::APPLICATION_FORM = "application/x-www-form-urlencoded";
 
 // ----------------- Http Util ---------------------
-const std::unordered_map<HttpResponseStatusCode, std::string> HttpUtil::httpResponseStatusMessage =
+const std::unordered_map<HttpResponseStatusCode, std::string> HttpUtil::m_httpResponseStatusMessage =
     {
         {UNKNOWN, "unknown"},
+        {CONTINUE, "Continue"},
         {OK, "OK"},
         {NOCONTENT, "No Content"},
         {BAD_REQUEST, "Bad Request"},
@@ -24,8 +25,8 @@ const std::unordered_map<HttpResponseStatusCode, std::string> HttpUtil::httpResp
 
 std::string HttpUtil::getStatusMessageByCode(HttpResponseStatusCode code)
 {
-    auto it = httpResponseStatusMessage.find(code);
-    if (it == httpResponseStatusMessage.end())
+    auto it = m_httpResponseStatusMessage.find(code);
+    if (it == m_httpResponseStatusMessage.end())
     {
         LOG(ERROR) << "status code error";
         return "";

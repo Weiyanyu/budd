@@ -8,6 +8,7 @@
 enum HttpResponseStatusCode
 {
     UNKNOWN,
+    CONTINUE = 100,
     OK = 200,
     NOCONTENT = 204,
     BAD_REQUEST = 400,
@@ -44,8 +45,10 @@ enum HttpMethod
 class HttpUtil
 {
 public:
-    static const std::unordered_map<HttpResponseStatusCode, std::string> httpResponseStatusMessage;
     static std::string getStatusMessageByCode(HttpResponseStatusCode code);
+private:
+    static const std::unordered_map<HttpResponseStatusCode, std::string> m_httpResponseStatusMessage;
+
 };
 
 #endif

@@ -143,8 +143,6 @@ void TcpConnection::sendData(Buffer *buffer)
 
 void TcpConnection::sendDataInLoop(const std::string &data)
 {
-    LOG(INFO) << "send data";
-
     m_eventLoop->assertInLoopThread();
     size_t sentN = write(m_sockfd, data.data(), data.size());
     if (sentN < 0)
