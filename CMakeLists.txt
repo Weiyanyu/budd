@@ -9,25 +9,15 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall -DNDEBUG")
 #for threasd
 
 
-SET(EXECUTABLE_OUTPUT_PATH ../bin)
 
 SET(LINK_DIR /usr/local/lib)
 link_directories(${LINK_DIR})
 
+add_subdirectory(base)
+add_subdirectory(tcp)
+add_subdirectory(http)
+add_subdirectory(test)
 
-#for test
-foreach(target testHttpServer socketClient)
-
-    include_directories(./include/)
-    file(GLOB SOURCES "./src/*.cpp" ./test/${target}.cpp)
-    
-    add_executable(${target} ${SOURCES})
-
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
-    find_package(Threads REQUIRED)
-    target_link_libraries(${target} PUBLIC Threads::Threads glog)
-
-endforeach(target)
 
 
 

@@ -1,7 +1,7 @@
-#include "httpServer.h"
-#include "eventLoop.h"
-#include "httpRequest.h"
-#include "httpResponse.h"
+#include "http/httpServer.h"
+#include "tcp/eventLoop.h"
+#include "http/httpRequest.h"
+#include "http/httpResponse.h"
 
 
 void handleHome(const HttpRequest& req, HttpResponse& resp) {

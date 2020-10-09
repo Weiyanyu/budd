@@ -1,9 +1,9 @@
 #include "httpServer.h"
 #include "httpContext.h"
-#include "tcpconnection.h"
+#include "tcp/tcpconnection.h"
 #include "httpRequest.h"
 #include "httpResponse.h"
-#include "acceptor.h"
+#include "tcp/acceptor.h"
 
 using std::placeholders::_1;
 using std::placeholders::_2;

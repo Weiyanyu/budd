@@ -10,8 +10,8 @@
 #include <netinet/in.h>
 #include <sys/errno.h>
 
-#include "buffer.h"
 #include "channel.h"
+#include "base/buffer.h"
 
 class EventLoop;
 
