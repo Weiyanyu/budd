@@ -13,7 +13,7 @@ void handleHome(const HttpRequest& req, HttpResponse& resp) {
 
 void handleImage(const HttpRequest& req, HttpResponse& resp) {
     LOG(INFO) << "handleImage";
-    if (!resp.setFile("/home/weiyanyu/learn/cpp/budd/test/static/cool.jpeg")) {
+    if (!resp.setFile("./static/cool.jpeg")) {
         resp.setStatusCode(HttpResponseStatusCode::NOT_FOUND);
     } else {
         resp.setContentType(ContentType::IMAGE_JPEG);
