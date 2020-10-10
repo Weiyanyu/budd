@@ -4,7 +4,10 @@
 #include <string>
 #include <unordered_map>
 #include <glog/logging.h>
-
+namespace budd 
+{
+namespace http 
+{
 enum HttpResponseStatusCode
 {
     UNKNOWN,
@@ -50,5 +53,7 @@ private:
     static const std::unordered_map<HttpResponseStatusCode, std::string> m_httpResponseStatusMessage;
 
 };
+} //namespace budd
+} //namespace http
 
 #endif

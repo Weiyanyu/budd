@@ -1,8 +1,12 @@
-#include "base/buffer.h"
 #include "httpContext.h"
 #include "httpParser.h"
 #include "httpParameter.h"
 #include <iostream>
+// #include "base/buffer.h"
+
+using namespace budd::http;
+
+using namespace budd::base;
 
 bool HttpParser::parse(Buffer *buffer, std::shared_ptr<HttpContext> context)
 {

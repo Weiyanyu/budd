@@ -2,12 +2,15 @@
 #include "eventLoop.h"
 #include "channel.h"
 #include "acceptor.h"
-#include "base/buffer.h"
 #include "tcpconnection.h"
 
 using std::placeholders::_1;
 using std::placeholders::_2;
 using std::placeholders::_3;
+
+using namespace budd::base;
+using namespace budd::tcp;
+
 
 TcpServer::TcpServer(EventLoop *eventLoop, int port)
     : m_eventLoop(eventLoop),

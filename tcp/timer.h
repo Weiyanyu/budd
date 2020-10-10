@@ -14,6 +14,10 @@
 #include <atomic>
 #include <algorithm>
 
+namespace budd 
+{
+namespace tcp
+{
 class EventLoop;
 class Timer
 {
@@ -84,5 +88,6 @@ private:
     std::set<std::pair<time_t, Timer>> m_timerSet;
     std::vector<std::pair<time_t, Timer>> m_activeTimers;
 };
-
+} //namespace tcp
+} //namespace budd
 #endif

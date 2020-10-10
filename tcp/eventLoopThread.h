@@ -7,6 +7,10 @@
 #include <mutex>
 #include <condition_variable>
 
+namespace budd 
+{
+namespace tcp
+{
 class EventLoop;
 class EventLoopThread
 {
@@ -27,5 +31,6 @@ private:
     std::mutex m_mutex;
     std::condition_variable m_condition;
 };
-
+} //namespace tcp
+} //namespace budd
 #endif

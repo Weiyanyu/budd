@@ -7,6 +7,10 @@
 #include <string>
 #include "eventLoopThread.h"
 
+namespace budd 
+{
+namespace tcp
+{
 class EventLoop;
 class EventLoopThreadPool
 {
@@ -25,5 +29,6 @@ private:
     bool m_started;
     size_t m_next;
 };
-
+} //namespace tcp
+} //namespace budd
 #endif

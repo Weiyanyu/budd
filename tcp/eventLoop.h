@@ -9,6 +9,11 @@
 #include <functional>
 #include <signal.h>
 
+namespace budd 
+{
+namespace tcp
+{
+
 class Channel;
 class Selector;
 class TimerQueue;
@@ -73,5 +78,7 @@ public:
         ::signal(SIGPIPE, SIG_IGN);
     }
 };
+} //namespace tcp
+} //namespace budd
 
 #endif

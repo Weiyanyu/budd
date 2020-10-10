@@ -6,8 +6,12 @@
 #include <string>
 #include <sstream>
 #include "httpParameter.h"
+#include "base/buffer.h"
 
-class Buffer;
+namespace budd 
+{
+namespace http 
+{
 class HttpResponse
 {
 public:
@@ -33,7 +37,7 @@ public:
 
     bool setFile(const std::string &filename);
 
-    void fillBuffer(Buffer *buffer);
+    void fillBuffer(base::Buffer *buffer);
 
     bool needClose() { return m_close; }
 
@@ -46,5 +50,7 @@ private:
     bool m_close;
     std::string m_body;
 };
+} //namespace budd
+} //namespace http
 
 #endif

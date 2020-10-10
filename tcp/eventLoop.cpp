@@ -4,6 +4,9 @@
 #include <sys/eventfd.h>
 #include "timer.h"
 
+using namespace budd::tcp;
+
+
 thread_local EventLoop *threadLocalEventLoop;
 
 IgnoreSigPipe initObj;

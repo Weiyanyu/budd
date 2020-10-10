@@ -1,6 +1,9 @@
 #include "selector.h"
 #include "channel.h"
 
+using namespace budd::tcp;
+
+
 Selector::Selector(EventLoop *eventLoop)
     : m_eventLoop(eventLoop)
 {

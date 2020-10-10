@@ -9,6 +9,10 @@
 #include <algorithm>
 #include <iostream>
 
+namespace budd 
+{
+namespace tcp
+{
 class EventLoop;
 class Channel;
 
@@ -34,4 +38,6 @@ private:
 
     int m_epollfd;
 };
+} //namespace tcp
+} //namespace budd
 #endif

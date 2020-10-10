@@ -3,6 +3,9 @@
 #include "http/httpRequest.h"
 #include "http/httpResponse.h"
 
+// using namespace budd::tcp;
+using namespace budd::http;
+
 
 void handleHome(const HttpRequest& req, HttpResponse& resp) {
     LOG(INFO) << "handleHome";
@@ -24,9 +27,7 @@ void handleImage(const HttpRequest& req, HttpResponse& resp) {
 void handlePost(const HttpRequest& req, HttpResponse& resp)
 {
     std::string name = req.getFromBody("name");
-
     resp.setBody("Hello, " + name);
-
     resp.setContentType(ContentType::TEXT_PLAIN);
     resp.setStatusCode(HttpResponseStatusCode::OK);
 }

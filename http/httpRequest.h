@@ -5,6 +5,10 @@
 #include <glog/logging.h>
 #include "httpParameter.h"
 
+namespace budd 
+{
+namespace http 
+{   
 class HttpRequest
 {
 public:
@@ -106,5 +110,7 @@ private:
     std::unordered_map<std::string, std::string> m_formBody;
     bool m_hasBody;
 };
+} //namespace budd
+} //namespace http
 
 #endif

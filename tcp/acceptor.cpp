@@ -2,6 +2,8 @@
 #include "eventLoop.h"
 #include <endian.h>
 
+using namespace budd::tcp;
+
 Acceptor::Acceptor(EventLoop *eventLoop, int port)
     : m_port(port),
       m_listenning(false),

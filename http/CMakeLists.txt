@@ -21,11 +21,6 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(budd_http PUBLIC Threads::Threads glog)
 include_directories(../)
-include_directories(../)
-
-
-#install(TARGETS budd_http DESTINATION lib)
 
 file(GLOB HEADERS "*.h")
-#install(FILES ${HEADERS} DESTINATION include/muduo/base)
 

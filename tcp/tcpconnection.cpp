@@ -1,6 +1,8 @@
 #include "tcpconnection.h"
 #include "eventLoop.h"
-#include "base/buffer.h"
+
+using namespace budd::tcp;
+using namespace budd::base;
 
 TcpConnection::TcpConnection(EventLoop *eventLoop, int sockfd, const char *clientIp, std::string name)
     : m_eventLoop(eventLoop),

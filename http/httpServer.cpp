@@ -9,7 +9,11 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using std::placeholders::_3;
 
-HttpServer::HttpServer(EventLoop *loop, int port)
+using namespace budd::base;
+using namespace budd::tcp;
+using namespace budd::http;
+
+HttpServer::HttpServer(tcp::EventLoop *loop, int port)
     : m_tcpServer(loop, port)
 {
     m_tcpServer.setConnectionCallback(std::bind(&HttpServer::onConnection, this, _1));
@@ -29,7 +33,7 @@ void HttpServer::onConnection(const std::shared_ptr<TcpConnection> &conn)
         conn->setContext(std::make_shared<HttpContext>());
     }
 }
-void HttpServer::onMessage(const std::shared_ptr<TcpConnection> &conn, Buffer *buffer, int n)
+void HttpServer::onMessage(const std::shared_ptr<TcpConnection> &conn, base::Buffer *buffer, int n)
 {
     std::shared_ptr<HttpContext> context = std::static_pointer_cast<HttpContext>(conn->getContext());
     bool isSuccess = context->praseRequest(buffer);
@@ -74,7 +78,7 @@ void HttpServer::onRequest(const std::shared_ptr<TcpConnection> &conn, const Htt
 
     response.setStatusMessage(HttpUtil::getStatusMessageByCode(response.getStatusCode()));
     //3. send data to client
-    Buffer buffer;
+    base::Buffer buffer;
     response.fillBuffer(&buffer);
     //4. if http connection close, set close and than shutdown connection
     conn->sendData(&buffer);

@@ -1,5 +1,7 @@
 #include "httpParameter.h"
 
+using namespace budd::http;
+
 //--------- CcontentType definetion ---------------
 const std::string ContentType::TEXT_PLAIN = "text/plain;charset=utf-8";
 const std::string ContentType::TEXT_HTML = "text/html;charset=utf-8";

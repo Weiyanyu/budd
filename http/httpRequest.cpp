@@ -1,5 +1,9 @@
 #include "httpRequest.h"
 
+using namespace budd;
+using namespace budd::http;
+
+
 void HttpRequest::clear()
 {
     m_method = NONE;

@@ -1,6 +1,9 @@
 #include "eventLoopThreadPool.h"
 #include "eventLoop.h"
 
+using namespace budd::tcp;
+
+
 EventLoopThreadPool::EventLoopThreadPool(EventLoop *bootstrapEventLoop, int loopNum)
     : m_bootstrapEventLoop(bootstrapEventLoop),
       m_loopNum(loopNum),

@@ -9,6 +9,8 @@
 #include <glog/logging.h>
 #include <algorithm>
 
+namespace budd {
+namespace base {
 class Buffer
 {
 public:
@@ -108,5 +110,7 @@ private:
 
     std::vector<char> m_buffer;
 };
+} //namespace base
+} //namespace budd
 
 #endif

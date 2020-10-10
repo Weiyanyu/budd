@@ -7,8 +7,13 @@
 #include <atomic>
 #include "tcpconnection.h"
 #include "acceptor.h"
+#include "base/buffer.h"
 
-class Buffer;
+using namespace budd::base;
+namespace budd 
+{
+namespace tcp
+{
 class EventLoop;
 class Acceptor;
 class TcpServer
@@ -49,5 +54,7 @@ private:
     std::shared_ptr<EventLoopThreadPool> m_loopPool;
     std::atomic_ulong m_nextConnectionId;
 };
+} //namespace tcp
+} //namespace budd
 
 #endif

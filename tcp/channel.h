@@ -7,6 +7,11 @@
 #include <glog/logging.h>
 #include "selector.h"
 
+namespace budd 
+{
+namespace tcp
+{
+
 class EventLoop;
 
 class Channel
@@ -99,5 +104,7 @@ private:
 
     void update();
 };
+} //namespace tcp
+} //namespace budd
 
 #endif

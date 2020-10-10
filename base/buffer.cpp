@@ -1,5 +1,8 @@
 #include "buffer.h"
 
+using namespace budd;
+using namespace budd::base;
+
 const char *Buffer::CRLF = "\r\n";
 
 Buffer::Buffer(size_t initialSize)

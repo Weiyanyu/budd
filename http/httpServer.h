@@ -7,17 +7,22 @@
 #include "httpContext.h"
 #include <unordered_map>
 
-class EventLoop;
-class TcpServer;
+using namespace budd::tcp;
+
+namespace budd 
+{
+namespace http 
+{
 class HttpRequest;
 class HttpResponse;
+
 class HttpServer
 {
 public:
     using HttpHandleFunc = std::function<void(const HttpRequest &, HttpResponse &)>;
     using HandleMap = std::unordered_map<std::string, HttpHandleFunc>;
 
-    HttpServer(EventLoop *loop, int port);
+    HttpServer(tcp::EventLoop *loop, int port);
 
     void handleFunc(std::string path, HttpHandleFunc func, HttpMethod method);
 
@@ -32,11 +37,13 @@ private:
     HandleMap m_handleHeadFuncMaps;
 
     void onConnection(const std::shared_ptr<TcpConnection> &conn);
-    void onMessage(const std::shared_ptr<TcpConnection> &conn, Buffer *, int n);
+    void onMessage(const std::shared_ptr<TcpConnection> &conn, base::Buffer *, int n);
     void onRequest(const std::shared_ptr<TcpConnection> &conn, const HttpRequest &request);
     void setRequestInfo(const std::shared_ptr<TcpConnection> &conn, const std::shared_ptr<HttpContext> &context);
 
     bool processRequest(const HttpRequest &req, HttpResponse &resp);
 };
+} //namespace budd
+} //namespace http
 
 #endif

@@ -13,8 +13,13 @@
 #include "channel.h"
 #include "base/buffer.h"
 
+using namespace budd::base;
+namespace budd 
+{
 class EventLoop;
 
+namespace tcp
+{
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>
 {
 public:
@@ -41,7 +46,7 @@ public:
     void connectDestroyed();
 
     void sendData(const std::string &data);
-    void sendData(Buffer *buffer);
+    void sendData(budd::base::Buffer *buffer);
     void shutdown();
 
     int sockFd()
@@ -97,5 +102,7 @@ private:
     Buffer m_outputBuffer;
     std::shared_ptr<void> m_context;
 };
+} //namespace tcp
+} //namespace budd
 
 #endif

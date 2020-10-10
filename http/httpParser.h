@@ -1,9 +1,13 @@
 #ifndef HTTPPARSER
 #define HTTPPARSER
-
 #include <memory>
+#include "base/buffer.h"
 
-class Buffer;
+
+namespace budd 
+{
+namespace http 
+{
 class HttpContext;
 class HttpRequest;
 class HttpParser
@@ -13,7 +17,7 @@ public:
         : m_state(EXPECTSTARTLINE)
     {
     }
-    bool parse(Buffer *buffer, std::shared_ptr<HttpContext> context);
+    bool parse(base::Buffer *buffer, std::shared_ptr<HttpContext> context);
 
 private:
     bool parseStartLine(const char *start, const char *end, HttpRequest *request);
@@ -31,5 +35,6 @@ private:
 
     HttpParseState m_state;
 };
-
+} //namespace budd
+} //namespace http
 #endif

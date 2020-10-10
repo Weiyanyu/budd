@@ -11,7 +11,10 @@
 #include <arpa/inet.h>
 #include <cstring>
 
-
+namespace budd 
+{
+namespace tcp
+{
 class EventLoop;
 
 class Acceptor
@@ -44,5 +47,7 @@ private:
 
     newConnectionCallback m_newConnectionCallback;
 };
+} //namespace tcp
+} //namespace budd
 
 #endif

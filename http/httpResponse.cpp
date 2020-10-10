@@ -1,7 +1,9 @@
 #include "httpResponse.h"
-#include "base/buffer.h"
 #include <fstream>
 #include <cstring>
+
+using namespace budd::base;
+using namespace budd::http;
 
 void HttpResponse::fillBuffer(Buffer *output)
 {

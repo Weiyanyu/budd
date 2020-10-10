@@ -1,5 +1,7 @@
 #include "httpContext.h"
-#include "base/buffer.h"
+
+using namespace budd::base;
+using namespace budd::http;
 
 bool HttpContext::praseRequest(Buffer *buffer)
 {
