@@ -117,7 +117,6 @@ void HttpServer::handleFunc(std::string path, HttpHandleFunc func, HttpMethod me
     default:
         break;
     }
-    m_handleGetFuncMaps[path] = std::move(func);
 }
 
 bool HttpServer::processRequest(const HttpRequest &request, HttpResponse &response)
